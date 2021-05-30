@@ -18,6 +18,7 @@ const SignUp = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password1, setPassword1] = useState('');
+    const [name, setName] = useState('');
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
