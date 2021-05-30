@@ -7,9 +7,8 @@ import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 
 export default ({navigation}) => {
-
     const handleLogin = () => {
-        signIn({email, password}, () => navigation.navigate('Homepage'), 
+        signIn({email, password}, () => navigation.replace('Homepage'), 
         (error) => console.error(error))
     }
 
@@ -18,6 +17,7 @@ export default ({navigation}) => {
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
+        ProximaNovaBold: require('../assets/fonts/ProximaNova-Bold.otf')
     });
       
     if (!loaded) {
@@ -27,31 +27,35 @@ export default ({navigation}) => {
     return (
         <KeyboardAvoidingView
             style={styles.container}>
+            <View style={styles.row}>
+                <Text style={styles.logoText}>VALUE</Text>
+                <Text style={styles.logoDollar}>$</Text>
+            </View>
             <Input
-                style={styles.textForLogin}
+                style={styles.textBox}
                 leftIcon={
-                        <Icon
-                            name="envelope"
-                            color="#ccd9ff"
-                            size={15}
-                        />
-                    }
-                underlineColorAndroid="transparent"
-                placeholder="Email"
+                    <Icon
+                        name="envelope"
+                        color="#133480"
+                        size={15}
+                    />
+                }
                 value={email}
                 onChangeText={(email) => setEmail(email)}
+                inputContainerStyle={styles.textField}
+                underlineColorAndroid="transparent"
+                placeholder="Email"
                 autoCapitalize="none"
                 autoCompleteType="email"
                 textContentType="emailAddress"
                 keyboardType="email-address"
-                inputContainerStyle={styles.textField}
             />
             <Input
-                style={styles.textForLogin}
+                style={styles.textBox}
                 leftIcon={
                     <Icon
                         name="lock"
-                        color="#ccd9ff"
+                        color="#133480"
                         size={20}
                     />
                 }
@@ -61,23 +65,21 @@ export default ({navigation}) => {
                 secureTextEntry={true}
                 inputContainerStyle={styles.textField}
             />
-
             <Button
-                buttonStyle={styles.button} onPress={handleLogin}
-                titleStyle={styles.buttonText}
+                buttonStyle={styles.button} 
+                onPress={handleLogin}
                 title="Login"
-            />
+                titleStyle={styles.buttonText}
+            />        
             <View style={styles.row}>
-                <Text style={styles.regText}>Don't have an account? </Text>
+                <Text style={styles.regularText}>Don't have an account? </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
-                    <Text style={styles.link}>Sign up.</Text>
+                    <Text style={styles.signUpText}>Sign up.</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
     )
-
 }
-
 
 const styles = StyleSheet.create(
     {
@@ -85,50 +87,58 @@ const styles = StyleSheet.create(
             paddingHorizontal: '10%',
             flexDirection: 'column',
             flex: 1,
-            justifyContent: 'center',
-            fontFamily: 'ProximaNova'
-        },
-        button: {
-            backgroundColor: "black",
-            width: '100%',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             alignItems: 'center',
-            borderRadius: 10,
-        },
-        buttonText: {
             fontFamily: 'ProximaNova'
-        },
-        text: {
-            fontFamily: 'ProximaNova'
-
-        },
-        regText: {
-            marginTop: 10,
-            fontSize: 15,
-            color: 'black',
-            fontFamily: 'ProximaNova'
-        },
-        textForLogin: {
-            fontFamily: 'ProximaNova'
-        },
-        link: {
-            marginTop: 8,
-            fontSize: 15,
-            color: 'black',
-            fontFamily: 'ProximaNova',
-            fontWeight: 'bold'
-        },
-        textField: {
-            backgroundColor: '#ffffff',
-            borderBottomWidth: 5,
-            borderWidth: 5,
-            borderColor: '#ffffff',
-            borderRadius: 20,
-            paddingLeft: 5
         },
         row: {
             flexDirection: 'row',
-            marginTop: 4,
+            marginTop: 100,
+            marginBottom: 50,
+            fontFamily: 'ProximaNova',
+        },
+        logoText: {
+            fontFamily: 'ProximaNovaBold',
+            fontSize: 45,
+            letterSpacing: 2,
+            paddingRight: 3
+        },
+        logoDollar: {
+            fontFamily: 'ProximaNova',
+            fontWeight: 'normal',
+            fontSize: 55,
+            marginTop: -7,
+            color: '#133480'
+        },
+        textBox: {
+            fontFamily: 'ProximaNova',
+            paddingLeft: 15
+        },
+        textField: {
+            backgroundColor: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 5,
+            borderBottomWidth: 5,
+            borderRadius: 20,
+            paddingLeft: 10,
+        },
+        button: {
+            backgroundColor: "#133480",
+            borderRadius: 20,
+            width: 295
+        },
+        buttonText: {
+            fontFamily: 'ProximaNova',
+        },
+        regularText: {
+            fontFamily: 'ProximaNova',
+            fontSize: 15,
+            color: 'black'
+        },
+        signUpText: {
+            fontFamily: 'ProximaNovaBold',
+            fontSize: 15,
+            color: '#133480',
         },
     })
 

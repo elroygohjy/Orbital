@@ -1,9 +1,9 @@
-import {Alert, StyleSheet, Text, KeyboardAvoidingView} from "react-native"
+import {Alert, StyleSheet, View, KeyboardAvoidingView, Text} from "react-native"
 import {Input, Button} from "react-native-elements"
 import React, {useState} from "react"
 import Icon from "react-native-vector-icons/FontAwesome"
-import { createAccount } from '../../api/auth'
-import { useFonts } from 'expo-font';
+import {createAccount} from '../../api/auth'
+import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 
 const SignUp = ({navigation}) => {
@@ -13,13 +13,11 @@ const SignUp = ({navigation}) => {
         }
         createAccount({name, email, password},
             () => navigation.navigate('Login'), (error) => {console.error(error)})
-
     };
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password1, setPassword1] = useState('');
-    const [name, setName] = useState('');
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
@@ -32,47 +30,31 @@ const SignUp = ({navigation}) => {
     return (
         <KeyboardAvoidingView
             style={styles.container}>
-                {/*
-            <Input style={styles.textForLogin}
-                   leftIcon={
-                       <Icon
-                           name="user"
-                           color="#ccd9ff"
-                           size={15}
-                       />
-                   }
-                   placeholder="Username"
-                   value={name}
-                   onChangeText={(name) => setName(name)}
-                   inputContainerStyle={styles.textField}
-            />
-                */}
+            <Text style={styles.header}>Create Account</Text>
             <Input
-                style={styles.textForLogin}
+                style={styles.textBox}
                 leftIcon={
                     <Icon
                         name="envelope"
-                        color="#ccd9ff"
+                        color="#133480"
                         size={15}
                     />
                 }
                 placeholder="Email Address"
                 value={email}
                 onChangeText={(email) => setEmail(email)}
+                inputContainerStyle={styles.textField}
                 autoCapitalize="none"
                 autoCompleteType="email"
                 textContentType="emailAddress"
                 keyboardType="email-address"
-                inputContainerStyle={styles.textField}
-                inputContainerStyle={styles.textField}
             />
-
             <Input
-                style={[styles.textForLogin, {justifyContent: 'flex-start'}]}
+                style={styles.textBox}
                 leftIcon={
                     <Icon
                         name="lock"
-                        color="#ccd9ff"
+                        color="#133480"
                         size={20}
                     />
                 }
@@ -83,11 +65,11 @@ const SignUp = ({navigation}) => {
                 inputContainerStyle={styles.textField}
             />
             <Input
-                style={[styles.textForLogin, {justifyContent: 'flex-end'}]}
+                style={styles.textBox}
                 leftIcon={
                     <Icon
                         name="lock"
-                        color="#ccd9ff"
+                        color="#133480"
                         size={20}
                     />
                 }
@@ -97,13 +79,12 @@ const SignUp = ({navigation}) => {
                 secureTextEntry={true}
                 inputContainerStyle={styles.textField}
             />
-
             <Button
-                buttonStyle={styles.button} onPress={handlePress}
-                titleStyle={styles.buttonText}
+                buttonStyle={styles.button} 
+                onPress={handlePress}
                 title="Sign up"
+                titleStyle={styles.buttonText}
             />
-
         </KeyboardAvoidingView>
     );
 }
@@ -114,31 +95,19 @@ const styles = StyleSheet.create(
             paddingHorizontal: '10%',
             flexDirection: 'column',
             flex: 1,
-            justifyContent: 'center'
-        },
-        button: {
-            backgroundColor: "black",
-            width: '100%',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             alignItems: 'center',
-            borderRadius: 10
+            fontFamily: 'ProximaNova',
         },
-        buttonText: {
-            fontFamily: 'ProximaNova'
+        header: {
+            fontFamily: 'ProximaNova',
+            marginTop: 100,
+            marginBottom: 50,
+            fontSize: 35
         },
-        text: {
-            fontFamily: 'ProximaNova'
-        },
-        textForLogin: {
-            fontFamily: 'ProximaNova'
-        },
-        registerAcc: {
-            fontFamily: 'ProximaNova'
-        },
-        names: {
-            fontSize: 20,
-            flexDirection: "row",
-            color: "black",
+        textBox: {
+            fontFamily: 'ProximaNova',
+            paddingLeft: 15
         },
         textField: {
             backgroundColor: '#ffffff',
@@ -146,9 +115,18 @@ const styles = StyleSheet.create(
             borderWidth: 5,
             borderColor: '#ffffff',
             borderRadius: 20,
-            paddingLeft: 5
+            paddingLeft: 10
+        },
+        button: {
+            backgroundColor: "#133480",
+            borderRadius: 20,
+            width: 295
+        },
+        buttonText: {
+            fontFamily: 'ProximaNova'
         }
-
     })
-export default SignUp
+
+    export default SignUp
+
 
