@@ -11,12 +11,12 @@ import {
 } from "@env"
 
 const firebaseConfig = {
-        apiKey: API_KEY,
-        authDomain: AUTH_DOMAIN,
-        projectId: PROJECT_ID,
-        storageBucket: STORAGE_BUCKET,
-        messagingSenderId: MESSAGING_SENDER_ID,
-        appId: APP_ID
+        apiKey: "AIzaSyDtztq7h-nCbddcKZZZRC__-pr8c52lkG0",
+        authDomain: "hello-2fc57.firebaseapp.com",
+        projectId: "hello-2fc57",
+        storageBucket: "hello-2fc57.appspot.com",
+        messagingSenderId: 289124598644,
+        appId: "1:289124598644:web:9f5211d9a87dee5ee42221"
     }
 
 

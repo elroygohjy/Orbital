@@ -3,11 +3,13 @@ import {Input, Button} from "react-native-elements"
 import React, {useState} from "react"
 import Icon from "react-native-vector-icons/FontAwesome"
 import { createAccount } from '../../api/auth'
+import { useFonts } from 'expo-font';
+import AppLoading from 'expo-app-loading';
 
 const SignUp = ({navigation}) => {
     const handlePress = () => {
         if (password != password1) {
-            Alert.alert("password mismatch retry")
+            Alert.alert("Passwords do not match.")
         }
         createAccount({name, email, password},
             () => navigation.navigate('Login'), (error) => {console.error(error)})
@@ -19,10 +21,18 @@ const SignUp = ({navigation}) => {
     const [password1, setPassword1] = useState('');
     const [name, setName] = useState('');
 
+    let [loaded] = useFonts({
+        ProximaNova: require('../assets/fonts/ProximaNova.otf'),
+    });
+      
+    if (!loaded) {
+        return <AppLoading />;
+    }
+
     return (
         <KeyboardAvoidingView
             style={styles.container}>
-            <Text style={styles.text}>Enter your Name:</Text>
+                {/*
             <Input style={styles.textForLogin}
                    leftIcon={
                        <Icon
@@ -31,11 +41,12 @@ const SignUp = ({navigation}) => {
                            size={15}
                        />
                    }
-                   placeholder="Your name"
+                   placeholder="Username"
                    value={name}
                    onChangeText={(name) => setName(name)}
+                   inputContainerStyle={styles.textField}
             />
-            <Text style={styles.text}>Enter your Email Address:</Text>
+                */}
             <Input
                 style={styles.textForLogin}
                 leftIcon={
@@ -45,14 +56,17 @@ const SignUp = ({navigation}) => {
                         size={15}
                     />
                 }
-                placeholder="xyz@email.com"
+                placeholder="Email Address"
                 value={email}
                 onChangeText={(email) => setEmail(email)}
                 autoCapitalize="none"
+                autoCompleteType="email"
+                textContentType="emailAddress"
+                keyboardType="email-address"
+                inputContainerStyle={styles.textField}
+                inputContainerStyle={styles.textField}
             />
 
-            <Text style={styles.text}>Enter your Password:</Text>
-            <KeyboardAvoidingView style ={{flexDirection: 'row'}}>
             <Input
                 style={[styles.textForLogin, {justifyContent: 'flex-start'}]}
                 leftIcon={
@@ -62,11 +76,11 @@ const SignUp = ({navigation}) => {
                         size={20}
                     />
                 }
-                placeholder="password"
+                placeholder="Password"
                 value={password}
                 onChangeText={(password) => setPassword(password)}
                 secureTextEntry={true}
-                inputContainerStyle={{width: '50%'}}
+                inputContainerStyle={styles.textField}
             />
             <Input
                 style={[styles.textForLogin, {justifyContent: 'flex-end'}]}
@@ -77,13 +91,12 @@ const SignUp = ({navigation}) => {
                         size={20}
                     />
                 }
-                placeholder="Confirm your password"
+                placeholder="Confirm password"
                 value={password1}
                 onChangeText={(password1) => setPassword1(password1)}
                 secureTextEntry={true}
-                inputContainerStyle={{width: '50%', right: 365}}
+                inputContainerStyle={styles.textField}
             />
-            </KeyboardAvoidingView>
 
             <Button
                 buttonStyle={styles.button} onPress={handlePress}
@@ -104,36 +117,36 @@ const styles = StyleSheet.create(
             justifyContent: 'center'
         },
         button: {
-            color: "blue",
-            left: '5%',
-            width: '15%'
+            backgroundColor: "black",
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10
         },
         buttonText: {
-            fontSize: 20,
-            color: "white",
-            fontWeight: "bold",
-
+            fontFamily: 'ProximaNova'
         },
         text: {
-            paddingLeft: 10,
-            fontSize: 20,
-            color: "grey",
-            fontWeight: "bold",
-
+            fontFamily: 'ProximaNova'
         },
         textForLogin: {
-            fontSize: 18,
-            color: "black",
-            fontWeight: "bold",
+            fontFamily: 'ProximaNova'
         },
         registerAcc: {
-            fontSize: 20,
-            color: 'blue',
+            fontFamily: 'ProximaNova'
         },
         names: {
             fontSize: 20,
             flexDirection: "row",
             color: "black",
+        },
+        textField: {
+            backgroundColor: '#ffffff',
+            borderBottomWidth: 5,
+            borderWidth: 5,
+            borderColor: '#ffffff',
+            borderRadius: 20,
+            paddingLeft: 5
         }
 
     })
