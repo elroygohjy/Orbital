@@ -9,14 +9,17 @@ import AppLoading from 'expo-app-loading';
 export default ({navigation}) => { 
     const handlePress = () => {
         if (password != password1) {
-            Alert.alert("Passwords do not match.")
+            //Alert.alert("Passwords do not match.")
+            setError("Passwords do not match.")
+            setFieldError('Error')
+        } else {
+            createAccount({name, email, password},
+                () => navigation.navigate('Login'), 
+                (error) => {
+                    setError(error)
+                    setFieldError('Error')
+                })
         }
-        createAccount({name, email, password},
-            () => navigation.navigate('Login'), 
-            (error) => {
-                setError(error)
-                setFieldError('Error')
-            })
     };
 
     const [email, setEmail] = useState('');
