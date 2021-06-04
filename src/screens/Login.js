@@ -5,8 +5,10 @@ import {signIn, signInGoogle} from '../../api/auth'
 import Icon from "react-native-vector-icons/FontAwesome"
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import { set } from "react-native-reanimated"
 
 export default ({navigation}) => {
+    
     const handleLogin = () => {
         signIn({email, password}, () => navigation.replace('Homepage'), 
         (error) => {
@@ -52,7 +54,8 @@ export default ({navigation}) => {
                 <Text style={styles.logoDollar}>$</Text>
             </View>
             <View style={styles.error}>
-                {fieldError && <Text style={styles.errorText}>"{error.toString()}"</Text>}
+                {fieldError && <Text style={styles.errorText}>
+                    {error.toString()}</Text>}
             </View>
             <Input
                 style={styles.textBox}
@@ -66,7 +69,9 @@ export default ({navigation}) => {
                 value={email}
                 onChangeText={(email) => setEmail(email)}
                 inputContainerStyle={[styles.textField, 
-                    fieldError ? styles.invalid : null]}
+                    fieldError 
+                        ? styles.invalid 
+                        : null]}
                 underlineColorAndroid="transparent"
                 placeholder="Email"
                 autoCapitalize="none"
@@ -88,7 +93,9 @@ export default ({navigation}) => {
                 onChangeText={(password) => setPassword(password)}
                 secureTextEntry={true}
                 inputContainerStyle={[styles.textField, 
-                    fieldError ? styles.invalid : null]}
+                    fieldError 
+                        ? styles.invalid 
+                        : null]}
             />
             <Button
                 buttonStyle={styles.button} 
