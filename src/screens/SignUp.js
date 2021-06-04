@@ -6,19 +6,25 @@ import {createAccount} from '../../api/auth'
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 
-const SignUp = ({navigation}) => {
+export default ({navigation}) => { 
     const handlePress = () => {
         if (password != password1) {
             Alert.alert("Passwords do not match.")
         }
         createAccount({name, email, password},
-            () => navigation.navigate('Login'), (error) => {console.error(error)})
+            () => navigation.navigate('Login'), 
+            (error) => {
+                setError(error)
+                setFieldError('Error')
+            })
     };
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password1, setPassword1] = useState('');
     const [name, setName] = useState('');
+    const [fieldError, setFieldError] = useState(null);
+    const [error, setError] = useState('')
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
@@ -32,6 +38,9 @@ const SignUp = ({navigation}) => {
         <KeyboardAvoidingView
             style={styles.container}>
             <Text style={styles.header}>Create Account</Text>
+            <View style={styles.error}>
+                {fieldError && <Text style={styles.errorText}>{error.toString()}</Text>}
+            </View>
             <Input
                 style={styles.textBox}
                 leftIcon={
@@ -44,7 +53,8 @@ const SignUp = ({navigation}) => {
                 placeholder="Email Address"
                 value={email}
                 onChangeText={(email) => setEmail(email)}
-                inputContainerStyle={styles.textField}
+                inputContainerStyle={[styles.textField, 
+                    fieldError ? styles.invalid : null]}
                 autoCapitalize="none"
                 autoCompleteType="email"
                 textContentType="emailAddress"
@@ -63,7 +73,8 @@ const SignUp = ({navigation}) => {
                 value={password}
                 onChangeText={(password) => setPassword(password)}
                 secureTextEntry={true}
-                inputContainerStyle={styles.textField}
+                inputContainerStyle={[styles.textField, 
+                    fieldError ? styles.invalid : null]}
             />
             <Input
                 style={styles.textBox}
@@ -78,7 +89,8 @@ const SignUp = ({navigation}) => {
                 value={password1}
                 onChangeText={(password1) => setPassword1(password1)}
                 secureTextEntry={true}
-                inputContainerStyle={styles.textField}
+                inputContainerStyle={[styles.textField, 
+                    fieldError ? styles.invalid : null]}
             />
             <Button
                 buttonStyle={styles.button} 
@@ -103,7 +115,7 @@ const styles = StyleSheet.create(
         header: {
             fontFamily: 'ProximaNova',
             marginTop: 100,
-            marginBottom: 50,
+            marginBottom: 10,
             fontSize: 35
         },
         textBox: {
@@ -112,7 +124,7 @@ const styles = StyleSheet.create(
         },
         textField: {
             backgroundColor: '#ffffff',
-            borderBottomWidth: 5,
+            borderBottomWidth: 2,
             borderWidth: 5,
             borderColor: '#ffffff',
             borderRadius: 20,
@@ -125,9 +137,19 @@ const styles = StyleSheet.create(
         },
         buttonText: {
             fontFamily: 'ProximaNova'
+        },
+        invalid: {
+            borderColor: 'red',
+            borderWidth: 2
+        },
+        error: {
+            padding: 15
+        },
+        errorText: {
+            fontFamily: 'ProximaNova',
+            fontSize: 20,
+            textAlign: 'center'
         }
     })
-
-    export default SignUp
 
 

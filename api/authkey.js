@@ -2,23 +2,22 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import {
-    API_KEY,
-    AUTH_DOMAIN,
-    PROJECT_ID,
-    STORAGE_BUCKET,
-    MESSAGING_SENDER_ID,
-    APP_ID
+    REACT_APP_API_KEY,
+    REACT_APP_AUTH_DOMAIN,
+    REACT_APP_PROJECT_ID,
+    REACT_APP_STORAGE_BUCKET,
+    REACT_APP_MESSAGING_SENDER_ID,
+    REACT_APP_APP_ID
 } from "@env"
 
 const firebaseConfig = {
-        apiKey: "AIzaSyDtztq7h-nCbddcKZZZRC__-pr8c52lkG0",
-        authDomain: "hello-2fc57.firebaseapp.com",
-        projectId: "hello-2fc57",
-        storageBucket: "hello-2fc57.appspot.com",
-        messagingSenderId: 289124598644,
-        appId: "1:289124598644:web:9f5211d9a87dee5ee42221"
+        apiKey: REACT_APP_API_KEY,
+        authDomain: REACT_APP_AUTH_DOMAIN,
+        projectId: REACT_APP_PROJECT_ID,
+        storageBucket: REACT_APP_STORAGE_BUCKET,
+        messagingSenderId: REACT_APP_MESSAGING_SENDER_ID,
+        appId: REACT_APP_APP_ID
     }
-
 
 const firebaseApp = !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app()
 

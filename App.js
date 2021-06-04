@@ -4,11 +4,13 @@ import {createStackNavigator} from "@react-navigation/stack"
 import Login from "./src/screens/Login"
 import SignUp from "./src/screens/SignUp"
 import Homepage from "./src/screens/Homepage"
+import Loading from "./src/screens/Loading"
 import firebase from "./api/authkey"
 
 const Stack = createStackNavigator()
 
 const screens = [
+    {name: "Loading", component: Loading},
     {name: "Login", component: Login},
     {name: "Sign Up", component: SignUp},
     {name: "Homepage", component: Homepage}
@@ -17,10 +19,11 @@ const screens = [
 export default function App() {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName={screens[0].name} 
+            <Stack.Navigator initialRouteName="Loading"
                 screenOptions={
                     {title: ""}
                 }>
+                <Stack.Screen name={"Loading"} component={Loading}/>
                 <Stack.Screen name={"Login"} component={Login}/>
                 <Stack.Screen name={"Sign Up"} component={SignUp}/>
                 <Stack.Screen name={"Homepage"} component={Homepage}/>
