@@ -1,19 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {Button} from "react-native-elements"
-import {signOut} from '../../api/auth'
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Icon from "react-native-vector-icons/FontAwesome"
-import firebase from 'firebase'
 import List from '../../List.js'
-import { NavigationContainer } from '@react-navigation/native';
 
 export default ({navigation}) => {
-    const handleLogout = () => {
-        signOut(() => navigation.replace('Login'), 
-        (error) => console.error(error))
-    }
 
     const getList = List()
     const id = []
@@ -73,14 +65,6 @@ const styles = StyleSheet.create(
             paddingHorizontal: '30%',
             flex: 1,
             justifyContent: 'center',
-        },
-        button: {
-            backgroundColor: "#133480",
-            width: '100%',
-            borderRadius: 20,
-        },
-        buttonText: {
-            fontFamily: 'ProximaNova'
         },
         addItem: {
             padding: 20

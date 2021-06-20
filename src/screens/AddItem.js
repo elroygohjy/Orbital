@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
+import {StyleSheet, Text, View, KeyboardAvoidingView} from 'react-native';
 import {Input, Button} from "react-native-elements"
-import {signOut} from '../../api/auth'
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Icon from "react-native-vector-icons/FontAwesome"
@@ -40,8 +39,7 @@ export default ({navigation}) => {
     }
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <View style={styles.row}>
                 <Text style={styles.logoText}>Add New Item</Text>
             </View>
@@ -118,11 +116,6 @@ const styles = StyleSheet.create(
         },
         buttonText: {
             fontFamily: 'ProximaNova',
-        },
-        regularText: {
-            fontFamily: 'ProximaNova',
-            fontSize: 18,
-            color: 'black'
         },
         invalid: {
             borderColor: 'red',

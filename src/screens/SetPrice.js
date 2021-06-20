@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
+import {StyleSheet, Text, View, KeyboardAvoidingView} from 'react-native';
 import {Input, Button} from "react-native-elements"
-import {signOut} from '../../api/auth'
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Icon from "react-native-vector-icons/FontAwesome"
@@ -9,7 +8,7 @@ import firebase from 'firebase'
 
 export default ({route, navigation}) => {
 
-    // arbitary current price for testing
+    // arbitrary test price
     const currentPrice = 5
     const {URL} = route.params
 
@@ -59,8 +58,7 @@ export default ({route, navigation}) => {
     }
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <View style={styles.row}>
                 <Text style={styles.logoText}>Add New Item</Text>
             </View>
@@ -138,16 +136,6 @@ const styles = StyleSheet.create(
         },
         buttonText: {
             fontFamily: 'ProximaNova',
-        },
-        regularText: {
-            fontFamily: 'ProximaNova',
-            fontSize: 18,
-            color: 'black'
-        },
-        signUpText: {
-            fontFamily: 'ProximaNovaBold',
-            fontSize: 18,
-            color: '#133480',
         },
         invalid: {
             borderColor: 'red',
