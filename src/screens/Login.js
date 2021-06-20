@@ -5,7 +5,6 @@ import {signIn, signInGoogle} from '../../api/auth'
 import Icon from "react-native-vector-icons/FontAwesome"
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
-import { set } from "react-native-reanimated"
 
 export default ({navigation}) => {
     
@@ -36,6 +35,12 @@ export default ({navigation}) => {
         });
         return unsubscribe
     }, [navigation]);
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerLeft: null
+          });
+      }, []);
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
