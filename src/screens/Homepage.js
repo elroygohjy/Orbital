@@ -56,7 +56,7 @@ export default ({navigation}) => {
     const [data, setData] = useState(list)
     const [modalVisible, setModalVisible] = useState(false);
     const [freq, setFreq] = useState("Select Option")
-    const [interval, setInterval] = useState(3000)
+    const [interval, setInterval] = useState(1000)
 
     const filtered = () => 
     setData(list.filter(function(x){

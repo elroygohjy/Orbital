@@ -11,7 +11,7 @@ export default ({navigation}) => {
     const handleLogin = () => {
         signIn({email, password}, () => navigation.replace('Homepage'), 
         (error) => {
-            setError(error)
+            setError('Error: Wrong email/password')
             setFieldError('Error')
         })
     }
@@ -19,7 +19,7 @@ export default ({navigation}) => {
     const loginGoogle = () => {
         signInGoogle(() => navigation.replace('Homepage'), 
         (error) => {
-            setError(error)
+            setError('Google authentication error')
             setFieldError('Error')
         })
     }
