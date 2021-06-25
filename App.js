@@ -1,14 +1,15 @@
 import React from "react";
 import {Text, StyleSheet} from 'react-native'
 import {createStackNavigator} from "@react-navigation/stack"
-import {createDrawerNavigator, DrawerContentScrollView, DrawerItem,
-DrawerItemList} from "@react-navigation/drawer";
+import {createDrawerNavigator, DrawerContentScrollView, DrawerItem} from "@react-navigation/drawer";
 import Login from "./src/screens/Login"
 import SignUp from "./src/screens/SignUp"
 import Homepage from "./src/screens/Homepage"
 import Loading from "./src/screens/Loading"
 import AddItem from "./src/screens/AddItem"
-import SetPrice from "./src/screens/SetPrice"
+import Item from "./src/screens/Item"
+import EditPrice from "./src/screens/EditPrice"
+import Settings from "./src/screens/Settings"
 import {signOut} from './api/auth'
 import {navigationRef, navigate} from './src/navigators/RootNavigation';
 import { NavigationContainer } from "@react-navigation/native";
@@ -34,8 +35,13 @@ function CustomDrawerContent(props) {
 
     return (
         <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
-        <DrawerItem label={() => <Text style={styles.logout}>Logout</Text>}
+        <DrawerItem label={() => <Text style={styles.label}>🏠  Home</Text>}
+            onPress={() => navigate('Homepage')}
+        />
+        <DrawerItem label={() => <Text style={styles.label}>⚙️  Settings</Text>}
+            onPress={() => navigate('Settings')}
+        />
+        <DrawerItem label={() => <Text style={styles.label}>🔑  Logout</Text>}
             onPress={handleLogout}
         />
         </DrawerContentScrollView>
@@ -53,7 +59,9 @@ const ContactStackNavigator = () => {
             <Stack.Screen name={"Sign Up"} component={SignUp}/>
             <Stack.Screen name={"Homepage"} component={Homepage}/>
             <Stack.Screen name={"Add Item"} component={AddItem}/>
-            <Stack.Screen name={"Set Price"} component={SetPrice}/>
+            <Stack.Screen name={"Item"} component={Item}/>
+            <Stack.Screen name={"Edit Price"} component={EditPrice}/>
+            <Stack.Screen name={"Settings"} component={Settings}/>
         </Stack.Navigator>
     );
 }
@@ -88,7 +96,7 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova',
             fontSize:17
         },
-        logout: {
+        label: {
             color: 'black',
             fontFamily: 'ProximaNova',
             fontSize: 17

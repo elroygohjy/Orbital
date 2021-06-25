@@ -5,41 +5,69 @@ import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Icon from "react-native-vector-icons/FontAwesome"
 import firebase from 'firebase'
+import { LogBox } from 'react-native';
+
+LogBox.ignoreAllLogs();
 
 export default ({route, navigation}) => {
-
-    // arbitrary test price
-    const currentPrice = 5
-    const {URL} = route.params
-
-    const setPrice = () => {
-        if (targetPrice < 0) {
-            setError('Target price must be positive')
-            setFieldError('Error')
-        } else if (targetPrice >= currentPrice) {
-            setError('Target price must be less than current price')
-            setFieldError('Error')       
-        } else if (targetPrice === '') {
-            setError('Target price cannot be empty')
-            setFieldError('Error')
-        } else {
-            firebase
-            .firestore()
-            .collection('users/' + firebase.auth().currentUser.email + '/items')
-            .add({
-                // test URL
-                URL: URL,
-                TargetPrice: targetPrice
-            })
-            setTimeout(() => {
-                navigation.replace('Homepage');
-                }, 15000);
-        }
-    }
 
     const [targetPrice, setTargetPrice] = useState('');
     const [fieldError, setFieldError] = useState(null);
     const [error, setError] = useState('')
+
+    var {id, target, currentPrice} = route.params
+    currentPrice = parseFloat(currentPrice.substring(1))
+
+    var countDecimals = function(value) {
+        if (!value.includes(".")) {
+            return 0
+        }
+        else if (Math.floor(value) !== value) {
+            return value.toString().split(".")[1].length || 0;
+        }
+        return 0;
+    }
+
+    const setPrice = () => {
+        if (isNaN(targetPrice)) {
+            setError('Target price must be a number')
+            setFieldError('Error')
+        }
+        else if (target == targetPrice) {
+            setError('New target price cannot be the same as the old target price')
+            setFieldError('Error')
+        }
+        else if (targetPrice <= 0) {
+            setError('Target price must be positive')
+            setFieldError('Error')
+        } 
+        else if (countDecimals(targetPrice) > 2) {
+            setError('Target price must be a valid price (in dollars and cents)')
+            setFieldError('Error')
+        }
+        else if (targetPrice >= currentPrice) {
+            setError('Target price must be less than current price')
+            setFieldError('Error')       
+        } 
+        else if (targetPrice == '') {
+            setError('Target price cannot be empty')
+            setFieldError('Error')
+        } 
+        else {
+            var sliced = 0
+            if (targetPrice.substr(-1) == '.') {
+                sliced = targetPrice.substring(0, targetPrice.length - 1)
+            }
+            
+            firebase
+            .firestore()
+            .collection('users/' + firebase.auth().currentUser.email + '/items')
+            .doc(id)
+            .update({Targetprice: sliced == 0 ? targetPrice : sliced})
+        
+            navigation.goBack()
+        }
+    }
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -60,7 +88,7 @@ export default ({route, navigation}) => {
     return (
         <KeyboardAvoidingView style={styles.container}>
             <View style={styles.row}>
-                <Text style={styles.logoText}>Add New Item</Text>
+                <Text style={styles.header}>Edit Target Price</Text>
             </View>
             <View style={styles.error}>
                 {fieldError && <Text style={styles.errorText}>
@@ -112,7 +140,7 @@ const styles = StyleSheet.create(
             marginBottom: 20,
             fontFamily: 'ProximaNova',
         },
-        logoText: {
+        header: {
             fontFamily: 'ProximaNovaBold',
             fontSize: 30
         },

@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, View, KeyboardAvoidingView, Text} from "react-native"
+import {StyleSheet, View, KeyboardAvoidingView, Text} from "react-native"
 import {Input, Button} from "react-native-elements"
 import React, {useState} from "react"
 import Icon from "react-native-vector-icons/FontAwesome"
