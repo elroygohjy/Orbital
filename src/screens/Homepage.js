@@ -7,6 +7,9 @@ import Icon1 from "react-native-vector-icons/FontAwesome"
 import Icon2 from "react-native-vector-icons/FontAwesome5"
 import List from '../../List.js'
 import ModalDropdown from 'react-native-modal-dropdown';
+import { registerForPushNotificationsAsync } from '../notification/setNotification'
+import firebase from '../../api/authkey'
+import "firebase/functions";
 
 export default ({navigation}) => {
 
@@ -31,7 +34,7 @@ export default ({navigation}) => {
 
     const handleSearch = text => {
         if (text == "") {
-            const match = 
+            const match =
             list
             .filter(function(x){
                 return x !== undefined
@@ -39,8 +42,7 @@ export default ({navigation}) => {
             setData(match)
         }
         const formattedQuery = text.toLowerCase();
-        console.log(list)
-        const match = 
+        const match =
         list
         .filter(function(x){
             return x !== undefined
@@ -58,7 +60,7 @@ export default ({navigation}) => {
     const [freq, setFreq] = useState("Select Option")
     const [interval, setInterval] = useState(1000)
 
-    const filtered = () => 
+    const filtered = () =>
     setData(list.filter(function(x){
         return x !== undefined
     }))
@@ -70,11 +72,16 @@ export default ({navigation}) => {
         setInterval(157784760000)
     }, interval)
 
+    //to get the notification token for expo
+    useEffect(() => {
+        registerForPushNotificationsAsync()
+    }, [])
+
     useEffect(() => {
         filtered()
         navigation.setOptions({
             headerLeft: () => (
-                <TouchableOpacity style={styles.icon} 
+                <TouchableOpacity style={styles.icon}
                 onPress={() => navigation.toggleDrawer()}>
                     <Icon1
                         name="bars"
@@ -85,7 +92,7 @@ export default ({navigation}) => {
             ),
             headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
-                    <TouchableOpacity style={styles.icon} 
+                    <TouchableOpacity style={styles.icon}
                     onPress={() => setModalVisible(true)}>
                         <Icon1
                             name="bell"
@@ -93,15 +100,15 @@ export default ({navigation}) => {
                             size={20}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.icon} 
-                    onPress={() => {}}>
+                    <TouchableOpacity style={styles.icon}
+                    onPress={() => firebase.functions().httpsCallable('scheduledWebScrap2')()}>
                         <Icon2
                             name="sync"
                             color="#133480"
                             size={20}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.icon} 
+                    <TouchableOpacity style={styles.icon}
                     onPress={() => navigation.navigate('Add Item')}>
                         <Icon1
                             name="plus"
@@ -118,21 +125,21 @@ export default ({navigation}) => {
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
         ProximaNovaBold: require('../assets/fonts/ProximaNova-Bold.otf')
     });
-      
+
     if (!loaded) {
         return <AppLoading />;
     }
-    
+
     function Item({ title, id, currentPrice, targetPrice, URL, lastUpdate }) {
         return (
-            <TouchableOpacity style={styles.item} 
-                onPress={() => navigation.navigate('Item', 
-                    {id : id, currentPrice : currentPrice, 
+            <TouchableOpacity style={styles.item}
+                onPress={() => navigation.navigate('Item',
+                    {id : id, currentPrice : currentPrice,
                     targetPrice: targetPrice,
                     URL: URL, lastUpdate: lastUpdate})}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.currentPrice}>{currentPrice}</Text>
-            </TouchableOpacity>   
+            </TouchableOpacity>
         );
     }
 
@@ -153,12 +160,12 @@ export default ({navigation}) => {
                     </View>}
                 data={data}
                 extraData={data}
-                renderItem={({ item }) => 
-                    <Item title={item.name} 
-                        id={item.id} 
-                        currentPrice={item.currentPrice} 
-                        targetPrice={item.targetPrice} 
-                        URL={item.URL} 
+                renderItem={({ item }) =>
+                    <Item title={item.name}
+                        id={item.id}
+                        currentPrice={item.currentPrice}
+                        targetPrice={item.targetPrice}
+                        URL={item.URL}
                         lastUpdate={item.lastUpdate}/>}
                 keyExtractor={(item, index) => item.id}
             />
@@ -173,12 +180,20 @@ export default ({navigation}) => {
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.notifs}>Receive Notifications Every </Text>
-                        <ModalDropdown 
-                            textStyle={styles.dropdown} 
+                        <ModalDropdown
+                            textStyle={styles.dropdown}
                             defaultValue={freq}
                             style={styles.select}
-                            options={['1 hour', '3 hours', '8 hours', '24 hours', '7 days']}
-                            onSelect={(index, value) => setFreq(value)}
+                            options={['No notification','1 hour', '3 hours', '8 hours', '24 hours', '7 days']}
+                            onSelect={async (index, value) => {
+                                setFreq(value)
+                                const optionsInTime = [Infinity, 1, 3, 8, 24, 24 * 7]
+                                const id = firebase.auth().currentUser.email
+                                const currentDate = new Date()
+                                await firebase.firestore().collection('users').doc(id).update({
+                                    date: currentDate,
+                                    interval: optionsInTime[index]})
+                            }}
                             dropdownStyle={styles.options}
                             dropdownTextStyle={styles.optionsText}/>
                         <Pressable
@@ -212,11 +227,11 @@ const styles = StyleSheet.create(
             borderWidth: 2,
             borderColor: 'black'
         },
-        searchBarText: { 
-            backgroundColor: '#dedede', 
+        searchBarText: {
+            backgroundColor: '#dedede',
             paddingHorizontal: 20,
-            fontFamily: 'ProximaNova', 
-            fontSize: 20, 
+            fontFamily: 'ProximaNova',
+            fontSize: 20,
             color: 'black'
         },
         item: {
@@ -260,7 +275,6 @@ const styles = StyleSheet.create(
             elevation: 5,
             borderColor: 'black',
             borderWidth: 2,
-            borderRadius: 20,
         },
         button: {
             borderRadius: 20,
