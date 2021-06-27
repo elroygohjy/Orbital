@@ -18,7 +18,8 @@ export const registerForPushNotificationsAsync = async () => {
             token = (await Notifications.getExpoPushTokenAsync()).data
             await firebase.firestore().collection('users').doc(firebase.auth().currentUser.email).set({token: token})
         } else {
-            alert('Must use physical device for Push Notifications');
+            //alert('Must use physical device for Push Notifications');
+            console.log('Must use physical device for Push Notifications')
         }
 
 

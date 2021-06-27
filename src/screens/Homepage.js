@@ -137,7 +137,7 @@ export default ({navigation}) => {
                     {id : id, currentPrice : currentPrice,
                     targetPrice: targetPrice,
                     URL: URL, lastUpdate: lastUpdate})}>
-                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.title} numberOfLines={2}>{title}</Text>
                 <Text style={styles.currentPrice}>{currentPrice}</Text>
             </TouchableOpacity>
         );
