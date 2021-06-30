@@ -4,6 +4,11 @@ import firebase from '../../api/authkey'
 
 export const registerForPushNotificationsAsync = async () => {
         let token
+        const id = firebase.auth().currentUser.email
+        let userDB = await firebase.firestore().collection('users').doc(id).get()
+        if (!userDB.exists) {
+            await firebase.firestore().collection('users').doc(id).set({})
+        }
         if (Constants.isDevice) {
             const {status: existingStatus} = await Notifications.getPermissionsAsync()
             let finalStatus = existingStatus
@@ -16,9 +21,10 @@ export const registerForPushNotificationsAsync = async () => {
                 return
             }
             token = (await Notifications.getExpoPushTokenAsync()).data
-            await firebase.firestore().collection('users').doc(firebase.auth().currentUser.email).set({token: token})
+            await firebase.firestore().collection('users').doc(firebase.auth().currentUser.email).update({token: token})
         } else {
-            alert('Must use physical device for Push Notifications');
+            //alert('Must use physical device for Push Notifications');
+            console.log('Must use physical device for Push Notifications')
         }
 
 
