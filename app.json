@@ -31,7 +31,8 @@
           "certificateHash": "C0:C4:09:E1:DA:C3:35:5A:F5:8B:7D:7E:71:03:CF:2F:96:65:77:D1"
         }
       },
-      "package": "com.junwei3.orbital"
+      "package": "com.orbital.value",
+      "googleServicesFile": "src/google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
