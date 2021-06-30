@@ -69,7 +69,7 @@ export default ({navigation}) => {
                     setFieldError('Error')
                     doc.ref.delete()
                 }
-                else if (targetPrice >= parseFloat(doc.data().price.substring(1))) {
+                else if (targetPrice >= parseFloat(doc.data().price.replace(/[^\d.-]/g, ""))) {
                     setError('Target price must be less than current price')
                     setFieldError('Error')
                     doc.ref.delete()

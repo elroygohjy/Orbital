@@ -6,7 +6,8 @@ import {createAccount} from '../../api/auth'
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 
-export default ({navigation}) => { 
+
+export default ({navigation}) => {
     const handlePress = () => {
         if (password != password1) {
             //Alert.alert("Passwords do not match.")
@@ -14,7 +15,7 @@ export default ({navigation}) => {
             setFieldError('Error')
         } else {
             createAccount({name, email, password},
-                () => navigation.navigate('Login'), 
+                () => navigation.navigate('Login'),
                 (error) => {
                     setError(error)
                     setFieldError('Error')
@@ -32,7 +33,7 @@ export default ({navigation}) => {
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
     });
-      
+
     if (!loaded) {
         return <AppLoading />;
     }
@@ -56,7 +57,7 @@ export default ({navigation}) => {
                 placeholder="Email Address"
                 value={email}
                 onChangeText={(email) => setEmail(email)}
-                inputContainerStyle={[styles.textField, 
+                inputContainerStyle={[styles.textField,
                     fieldError ? styles.invalid : null]}
                 autoCapitalize="none"
                 autoCompleteType="email"
@@ -76,7 +77,7 @@ export default ({navigation}) => {
                 value={password}
                 onChangeText={(password) => setPassword(password)}
                 secureTextEntry={true}
-                inputContainerStyle={[styles.textField, 
+                inputContainerStyle={[styles.textField,
                     fieldError ? styles.invalid : null]}
             />
             <Input
@@ -92,11 +93,11 @@ export default ({navigation}) => {
                 value={password1}
                 onChangeText={(password1) => setPassword1(password1)}
                 secureTextEntry={true}
-                inputContainerStyle={[styles.textField, 
+                inputContainerStyle={[styles.textField,
                     fieldError ? styles.invalid : null]}
             />
             <Button
-                buttonStyle={styles.button} 
+                buttonStyle={styles.button}
                 onPress={handlePress}
                 title="Sign up"
                 titleStyle={styles.buttonText}
