@@ -31,11 +31,11 @@ export default ({navigation}) => {
         else if (countDecimals(targetPrice) > 2) {
             setError('Target price must be a valid price (in dollars and cents)')
             setFieldError('Error')
-        } 
+        }
         else if (targetPrice === '') {
             setError('Target price cannot be empty')
             setFieldError('Error')
-        } 
+        }
         else {
             var sliced = 0
             if (targetPrice.substr(-1) == '.') {
@@ -87,8 +87,8 @@ export default ({navigation}) => {
     }
 
     const addItem = () => {
-        
-        if (URL.includes('shopee.sg/')) {
+        let checkURL = URL.includes('shopee.sg/') || URL.includes('qoo') || URL.includes('amazon') || URL.includes('ebay')
+        if (checkURL) {
             value = URL
             // setURL('')
             setPrice()
@@ -116,7 +116,7 @@ export default ({navigation}) => {
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
         ProximaNovaBold: require('../assets/fonts/ProximaNova-Bold.otf')
     });
-      
+
     if (!loaded) {
         return <AppLoading />;
     }
@@ -132,7 +132,7 @@ export default ({navigation}) => {
             </View>
             <Input
                 style={styles.textBox}
-                leftIcon={ 
+                leftIcon={
                     <Icon
                         name="internet-explorer"
                         color="#133480"
@@ -141,9 +141,9 @@ export default ({navigation}) => {
                 }
                 value={URL}
                 onChangeText={(URL) => setURL(URL)}
-                inputContainerStyle={[styles.textField, 
+                inputContainerStyle={[styles.textField,
                     fieldError
-                        ? styles.invalid 
+                        ? styles.invalid
                         : null]}
                 underlineColorAndroid="transparent"
                 placeholder="Enter URL"
@@ -151,7 +151,7 @@ export default ({navigation}) => {
             />
             <Input
                 style={styles.textBox}
-                leftIcon={ 
+                leftIcon={
                     <Icon
                         name="dollar"
                         color="#133480"
@@ -160,9 +160,9 @@ export default ({navigation}) => {
                 }
                 value={targetPrice}
                 onChangeText={(targetPrice) => setTargetPrice(targetPrice)}
-                inputContainerStyle={[styles.textField, 
+                inputContainerStyle={[styles.textField,
                     fieldError
-                        ? styles.invalid 
+                        ? styles.invalid
                         : null]}
                 underlineColorAndroid="transparent"
                 placeholder="Set Target Price"
