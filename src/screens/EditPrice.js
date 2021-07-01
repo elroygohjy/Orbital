@@ -44,11 +44,11 @@ export default ({route, navigation}) => {
         else if (countDecimals(targetPrice) > 2) {
             setError('Target price must be a valid price (in dollars and cents)')
             setFieldError('Error')
-        }
+        } /*
         else if (targetPrice >= currentPrice) {
             setError('Target price must be less than current price')
             setFieldError('Error')       
-        } 
+        } */
         else if (targetPrice == '') {
             setError('Target price cannot be empty')
             setFieldError('Error')
@@ -63,7 +63,7 @@ export default ({route, navigation}) => {
             .firestore()
             .collection('users/' + firebase.auth().currentUser.email + '/items')
             .doc(id)
-            .update({Targetprice: sliced == 0 ? targetPrice : sliced})
+            .update({TargetPrice: sliced == 0 ? parseFloat(targetPrice) : sliced})
         
             navigation.goBack()
         }

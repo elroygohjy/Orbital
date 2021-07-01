@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "289124598644",
+    "firebase_url": "https://hello-2fc57-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "hello-2fc57",
+    "storage_bucket": "hello-2fc57.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289124598644:android:72c777615c743b1be42221",
+        "android_client_info": {
+          "package_name": "com.orbital.value"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "289124598644-uqim291ouvj8ri0n551ljmp8691uva8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWCT_JmeZjJxAwtloXFie3LKUZKx4G6Uc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "289124598644-uqim291ouvj8ri0n551ljmp8691uva8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

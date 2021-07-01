@@ -2,6 +2,14 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import firebase from '../../api/authkey'
 
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
+
 export const registerForPushNotificationsAsync = async () => {
         let token
         const id = firebase.auth().currentUser.email

@@ -24,7 +24,7 @@ export default ({navigation}) => {
                     id: dict.id,
                     name: dict.name,
                     currentPrice: dict.price,
-                    targetPrice: dict.Targetprice,
+                    targetPrice: dict.TargetPrice,
                     URL: dict.URL,
                     lastUpdate: dict.lastUpdate
                 }

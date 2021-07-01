@@ -48,7 +48,7 @@ export default ({navigation}) => {
             .collection('users/' + firebase.auth().currentUser.email + '/items')
             .add({
                 URL: value,
-                Targetprice: sliced == 0 ? targetPrice : sliced
+                TargetPrice: sliced == 0 ? parseFloat(targetPrice) : sliced
             })
             .then(doc => {
                 setTimeout(() => check(doc.id), 10000)
@@ -68,12 +68,12 @@ export default ({navigation}) => {
                     setError('Invalid URL entered')
                     setFieldError('Error')
                     doc.ref.delete()
-                }
+                }/*
                 else if (targetPrice >= parseFloat(doc.data().price.replace(/[^\d.-]/g, ""))) {
                     setError('Target price must be less than current price')
                     setFieldError('Error')
                     doc.ref.delete()
-                }
+                }*/
                 else {
                     navigation.reset({routes: [{ name: 'Homepage' }]});
                 }
@@ -93,6 +93,7 @@ export default ({navigation}) => {
             // setURL('')
             setPrice()
         } else {
+            console.log(URL)
             setError('Invalid URL entered')
             setFieldError('Error')
             setDisabled(false)

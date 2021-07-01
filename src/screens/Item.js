@@ -37,7 +37,7 @@ export default ({route, navigation}) => {
             .doc(id)
             .get().then((doc) => {
                 if (doc.exists) {
-                    setTarget(doc.data().Targetprice)
+                    setTarget(doc.data().TargetPrice)
                 } else {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
