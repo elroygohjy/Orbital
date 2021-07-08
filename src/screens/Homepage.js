@@ -136,7 +136,8 @@ export default ({navigation}) => {
                 onPress={() => navigation.navigate('Item',
                     {id : id, currentPrice : currentPrice,
                     targetPrice: targetPrice,
-                    URL: URL, lastUpdate: lastUpdate})}>
+                    URL: URL, lastUpdate: lastUpdate,
+                    item: title})}>
                 <Text style={styles.title} numberOfLines={2}>{title}</Text>
                 <Text style={styles.currentPrice}>{currentPrice}</Text>
             </TouchableOpacity>

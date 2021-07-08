@@ -8,6 +8,7 @@ import AppLoading from 'expo-app-loading';
 
 
 export default ({navigation}) => {
+
     const handlePress = () => {
         if (password != password1) {
             //Alert.alert("Passwords do not match.")
@@ -15,7 +16,7 @@ export default ({navigation}) => {
             setFieldError('Error')
         } else {
             createAccount({name, email, password},
-                () => navigation.navigate('Login'),
+                () => navigation.replace('Login', {successMessage : "Sign up successful. You may now log in."}),
                 (error) => {
                     setError(error)
                     setFieldError('Error')
@@ -54,6 +55,15 @@ export default ({navigation}) => {
                         size={15}
                     />
                 }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => setEmail('')}
+                        style={styles.icon}
+                    />
+                }
                 placeholder="Email Address"
                 value={email}
                 onChangeText={(email) => setEmail(email)}
@@ -73,6 +83,15 @@ export default ({navigation}) => {
                         size={20}
                     />
                 }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => setPassword('')}
+                        style={styles.icon}
+                    />
+                }
                 placeholder="Password"
                 value={password}
                 onChangeText={(password) => setPassword(password)}
@@ -87,6 +106,15 @@ export default ({navigation}) => {
                         name="lock"
                         color="#133480"
                         size={20}
+                    />
+                }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => setPassword1('')}
+                        style={styles.icon}
                     />
                 }
                 placeholder="Confirm password"
@@ -153,6 +181,9 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova',
             fontSize: 20,
             textAlign: 'center'
+        },
+        icon: {
+            marginRight: 5
         }
     })
 

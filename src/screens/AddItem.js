@@ -43,6 +43,8 @@ export default ({navigation}) => {
             }
 
             setDisabled(true)
+            setFieldError(null)
+            setEditable(false)
             firebase
             .firestore()
             .collection('users/' + firebase.auth().currentUser.email + '/items')
@@ -63,6 +65,7 @@ export default ({navigation}) => {
         .doc(id)
         .get().then((doc) => {
             setDisabled(false)
+            setEditable(true)
             if (doc.exists) {
                 if (doc.data().price == "Broken URL is given, did you copied correctly?") {
                     setError('Invalid URL entered')
@@ -97,6 +100,7 @@ export default ({navigation}) => {
             setError('Invalid URL entered')
             setFieldError('Error')
             setDisabled(false)
+            setEditable(true)
         }
     }
 
@@ -105,6 +109,7 @@ export default ({navigation}) => {
     const [fieldError, setFieldError] = useState(null);
     const [error, setError] = useState('')
     const [disabled, setDisabled] = useState(false)
+    const [editable, setEditable] = useState(true)
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -140,6 +145,16 @@ export default ({navigation}) => {
                         size={15}
                     />
                 }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => editable ? setURL('') : {}}
+                        style={styles.icon}
+                    />
+                }
+                editable={editable}
                 value={URL}
                 onChangeText={(URL) => setURL(URL)}
                 inputContainerStyle={[styles.textField,
@@ -159,6 +174,16 @@ export default ({navigation}) => {
                         size={15}
                     />
                 }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => editable ? setTargetPrice('') : {}}
+                        style={styles.icon}
+                    />
+                }
+                editable={editable}
                 value={targetPrice}
                 onChangeText={(targetPrice) => setTargetPrice(targetPrice)}
                 inputContainerStyle={[styles.textField,
@@ -233,6 +258,9 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova',
             fontSize: 20,
             textAlign: 'center'
+        },
+        icon: {
+            marginRight: 5
         }
     })
 

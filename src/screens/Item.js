@@ -8,7 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 export default ({route, navigation}) => {
 
-    var {id, currentPrice, targetPrice, URL, lastUpdate} = route.params
+    var {id, currentPrice, targetPrice, URL, lastUpdate, item} = route.params
     const [target, setTarget] = useState(targetPrice)
 
     const isFocused = useIsFocused();
@@ -64,6 +64,7 @@ export default ({route, navigation}) => {
                 <Text style={styles.header}>Item Details</Text>
             </View>
             <View style={styles.prices}>
+                <Text style={styles.price}>Item Name: {item}</Text>
                 <Text style={styles.price}>Current Price: {currentPrice}</Text>
                 <Text style={styles.price}>Target Price: ${target}</Text>
                 <Text style={styles.price}>Last Updated: {lastUpdate}</Text>

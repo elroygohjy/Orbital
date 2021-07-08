@@ -6,11 +6,20 @@ import Icon from "react-native-vector-icons/FontAwesome"
 import { useFonts } from 'expo-font';
 import AppLoading from 'expo-app-loading';
 
-export default ({navigation}) => {
+export default ({route, navigation}) => {
+
+    const {successMessage} = route.params === undefined ? '' : route.params
     
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [fieldError, setFieldError] = useState(null);
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState(null)
+
     const handleLogin = () => {
         signIn({email, password}, () => navigation.replace('Homepage'), 
         (error) => {
+            setSuccess(null)
             setError('Error: Wrong email/password')
             setFieldError('Error')
         })
@@ -19,15 +28,11 @@ export default ({navigation}) => {
     const loginGoogle = () => {
         signInGoogle(() => navigation.replace('Homepage'), 
         (error) => {
+            setSuccess(null)
             setError('Google authentication error')
             setFieldError('Error')
         })
     }
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [fieldError, setFieldError] = useState(null);
-    const [error, setError] = useState('')
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -41,6 +46,13 @@ export default ({navigation}) => {
             headerLeft: null
           });
       }, []);
+
+    useEffect(() => {
+        if (successMessage !== undefined) {
+            setError(successMessage)
+            setSuccess('Success')
+        }
+    }, [])
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
@@ -61,6 +73,8 @@ export default ({navigation}) => {
             <View style={styles.error}>
                 {fieldError && <Text style={styles.errorText}>
                     {error.toString()}</Text>}
+                {success && <Text style={styles.successText}>
+                    {error.toString()}</Text>}
             </View>
             <Input
                 style={styles.textBox}
@@ -69,6 +83,15 @@ export default ({navigation}) => {
                         name="envelope"
                         color="#133480"
                         size={15}
+                    />
+                }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => setEmail('')}
+                        style={styles.icon}
                     />
                 }
                 value={email}
@@ -91,6 +114,15 @@ export default ({navigation}) => {
                         name="lock"
                         color="#133480"
                         size={20}
+                    />
+                }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => setPassword('')}
+                        style={styles.icon}
                     />
                 }
                 placeholder="Password"
@@ -208,6 +240,15 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova',
             fontSize: 20,
             textAlign: 'center'
+        },
+        successText: {
+            fontFamily: 'ProximaNova',
+            fontSize: 20,
+            textAlign: 'center',
+            color: 'green'
+        },
+        icon: {
+            marginRight: 5
         }
     })
 

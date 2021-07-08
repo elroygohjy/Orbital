@@ -11,12 +11,12 @@ LogBox.ignoreAllLogs();
 
 export default ({route, navigation}) => {
 
-    const [targetPrice, setTargetPrice] = useState('');
-    const [fieldError, setFieldError] = useState(null);
-    const [error, setError] = useState('')
-
     var {id, target, currentPrice} = route.params
     currentPrice = parseFloat(currentPrice.substring(1))
+
+    const [targetPrice, setTargetPrice] = useState(target.toString());
+    const [fieldError, setFieldError] = useState(null);
+    const [error, setError] = useState('')
 
     var countDecimals = function(value) {
         if (!value.includes(".")) {
@@ -103,6 +103,16 @@ export default ({route, navigation}) => {
                         size={15}
                     />
                 }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => setTargetPrice('')}
+                        style={styles.icon}
+                    />
+                }
+                defaultValue={targetPrice}
                 value={targetPrice}
                 onChangeText={(targetPrice) => setTargetPrice(targetPrice)}
                 inputContainerStyle={[styles.textField, 
@@ -176,6 +186,9 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova',
             fontSize: 20,
             textAlign: 'center'
+        },
+        icon: {
+            marginRight: 5
         }
     })
 
