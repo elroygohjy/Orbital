@@ -10,6 +10,8 @@ import AddItem from "./src/screens/AddItem"
 import Item from "./src/screens/Item"
 import EditPrice from "./src/screens/EditPrice"
 import Settings from "./src/screens/Settings"
+import EditItemName from "./src/screens/EditItemName"
+import Barcode from "./src/screens/Barcode"
 import {signOut} from './api/auth'
 import {navigationRef, navigate} from './src/navigators/RootNavigation';
 import { NavigationContainer } from "@react-navigation/native";
@@ -62,6 +64,8 @@ const ContactStackNavigator = () => {
             <Stack.Screen name={"Item"} component={Item}/>
             <Stack.Screen name={"Edit Price"} component={EditPrice}/>
             <Stack.Screen name={"Settings"} component={Settings}/>
+            <Stack.Screen name={"Edit Item Name"} component={EditItemName}/>
+            <Stack.Screen name={"Barcode"} component={Barcode}/>
         </Stack.Navigator>
     );
 }

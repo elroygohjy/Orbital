@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text,
     TouchableOpacity, SafeAreaView, FlatList, TextInput, Modal, Pressable} from 'react-native';
+import Icon from "react-native-vector-icons/FontAwesome"
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Icon1 from "react-native-vector-icons/FontAwesome"
@@ -23,10 +24,17 @@ export default ({navigation}) => {
                 {
                     id: dict.id,
                     name: dict.name,
-                    currentPrice: dict.price,
+                    currentPrice: dict.price === undefined ? dict.price : dict.price[dict.price.length-1],
                     targetPrice: dict.TargetPrice,
                     URL: dict.URL,
-                    lastUpdate: dict.lastUpdate
+                    lastUpdate: dict.lastUpdate,
+                    highestPrice: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["highestPrice"],
+                    highestDate: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["highLastUpdate"],
+                    lowestPrice: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["lowestPrice"],
+                    lowestDate: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["lowLastUpdate"],
+                    reviewCount: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["noOfRatings"],
+                    rating: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["rating"],
+                    site: dict.site
                 }
             );
         }
@@ -57,6 +65,7 @@ export default ({navigation}) => {
     const [query, setQuery] = useState('');
     const [data, setData] = useState(list)
     const [modalVisible, setModalVisible] = useState(false);
+    const [modal2Visible, setModal2Visible] = useState(false);
     const [freq, setFreq] = useState("Select Option")
     const [interval, setInterval] = useState(1000)
 
@@ -130,14 +139,24 @@ export default ({navigation}) => {
         return <AppLoading />;
     }
 
-    function Item({ title, id, currentPrice, targetPrice, URL, lastUpdate }) {
+    function Item({ title, id, currentPrice, targetPrice, URL, lastUpdate, 
+        highestPrice, highestDate, lowestPrice, lowestDate, reviewCount, rating, site }) {
         return (
             <TouchableOpacity style={styles.item}
                 onPress={() => navigation.navigate('Item',
-                    {id : id, currentPrice : currentPrice,
+                    {id : id, 
+                    currentPrice : currentPrice,
                     targetPrice: targetPrice,
-                    URL: URL, lastUpdate: lastUpdate,
-                    item: title})}>
+                    URL: URL, 
+                    lastUpdate: lastUpdate,
+                    item: title, 
+                    highestPrice: highestPrice,
+                    highestDate: highestDate,
+                    lowestPrice: lowestPrice,
+                    lowestDate: lowestDate,
+                    reviewCount: reviewCount,
+                    rating: rating,
+                    site: site})}>
                 <Text style={styles.title} numberOfLines={2}>{title}</Text>
                 <Text style={styles.currentPrice}>{currentPrice}</Text>
             </TouchableOpacity>
@@ -158,6 +177,13 @@ export default ({navigation}) => {
                         placeholder="🔎   Search"
                         style={styles.searchBarText}
                         />
+                        <Icon
+                        name="filter"
+                        color="grey"
+                        size={25}
+                        style={styles.filter}
+                        onPress={() => setModal2Visible(!modal2Visible)}
+                    />
                     </View>}
                 data={data}
                 extraData={data}
@@ -167,7 +193,15 @@ export default ({navigation}) => {
                         currentPrice={item.currentPrice}
                         targetPrice={item.targetPrice}
                         URL={item.URL}
-                        lastUpdate={item.lastUpdate}/>}
+                        lastUpdate={item.lastUpdate}
+                        highestPrice={item.highestPrice}
+                        highestDate={item.highestDate}
+                        lowestPrice={item.lowestPrice}
+                        lowestDate={item.lowestDate}
+                        reviewCount={item.reviewCount}
+                        rating={item.rating}
+                        site={item.site}
+                        />}
                 keyExtractor={(item, index) => item.id}
             />
             <Modal
@@ -205,6 +239,33 @@ export default ({navigation}) => {
                     </View>
                 </View>
             </Modal>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modal2Visible}
+                onRequestClose={() => {
+                    setModal2Visible(!modal2Visible);
+                }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.notifs}>Filter By </Text>
+                        <ModalDropdown
+                            textStyle={styles.dropdown}
+                            defaultValue={freq}
+                            style={styles.select}
+                            options={['Price (highest first)','Price (lowest first)', 'Percentage difference between current and target price (lowest first)']}
+                            onSelect={() =>{}}
+                            dropdownStyle={styles.options}
+                            dropdownTextStyle={styles.optionsText}/>
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => setModal2Visible(!modal2Visible)}>
+                            <Text style={styles.textStyle}>Confirm</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -226,7 +287,8 @@ const styles = StyleSheet.create(
             marginBottom: 5,
             borderRadius: 20,
             borderWidth: 2,
-            borderColor: 'black'
+            borderColor: 'black',
+            flexDirection: 'row'
         },
         searchBarText: {
             backgroundColor: '#dedede',
@@ -321,6 +383,9 @@ const styles = StyleSheet.create(
             padding: 10,
             borderRadius: 20,
             marginTop: 5
+        },
+        filter: {
+            paddingLeft: "45%"
         }
     })
 

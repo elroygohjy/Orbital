@@ -1,4 +1,5 @@
-import { StyleSheet, Text, KeyboardAvoidingView, TouchableOpacity, View } from "react-native"
+import { StyleSheet, Text, KeyboardAvoidingView, 
+    TouchableOpacity, View } from "react-native"
 import {Input, Button} from "react-native-elements"
 import React, {useState, useEffect} from "react"
 import {signIn, signInGoogle} from '../../api/auth'
@@ -76,6 +77,7 @@ export default ({route, navigation}) => {
                 {success && <Text style={styles.successText}>
                     {error.toString()}</Text>}
             </View>
+           
             <Input
                 style={styles.textBox}
                 leftIcon={ 
@@ -107,6 +109,7 @@ export default ({route, navigation}) => {
                 textContentType="emailAddress"
                 keyboardType="email-address"
             />
+           
             <Input
                 style={styles.textBox}
                 leftIcon={
@@ -154,6 +157,7 @@ export default ({route, navigation}) => {
                     />
                 }
             />              
+        
             <View style={styles.row}>
                 <Text style={styles.regularText}>Don't have an account? </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>

@@ -1,14 +1,27 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, KeyboardAvoidingView} from 'react-native';
+import {StyleSheet, Text, View, KeyboardAvoidingView,
+ActivityIndicator, TouchableOpacity} from 'react-native';
 import {Input, Button} from "react-native-elements"
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Icon from "react-native-vector-icons/FontAwesome"
+import Icon1 from "react-native-vector-icons/FontAwesome"
 import firebase from 'firebase'
+import { getDevicePushTokenAsync, getExpoPushTokenAsync } from 'expo-notifications';
+import { getInstallReferrerAsync } from 'expo-application';
 
-export default ({navigation}) => {
+export default ({route, navigation}) => {
 
     var value = ''
+    var {test} = typeof route.params === 'undefined' ? '' : route.params
+    console.log(test)
+    const [URL, setURL] = useState(test === undefined ? '' : test.toString());
+    const [targetPrice, setTargetPrice] = useState('');
+    const [fieldError, setFieldError] = useState(null);
+    const [error, setError] = useState('')
+    const [disabled, setDisabled] = useState(false)
+    const [editable, setEditable] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     var countDecimals = function(value) {
         if (!value.includes(".")) {
@@ -18,23 +31,56 @@ export default ({navigation}) => {
             return value.toString().split(".")[1].length || 0;
         return 0;
     }
+    
+    const getItemKey = async () => {
+       var count = 0;
+       await firebase
+       .firestore()
+       .doc('users/' + firebase.auth().currentUser.email)
+       .get()
+       .then(doc => {
+           count = doc.data().itemKeyCounter
+           firebase
+           .firestore()
+           .doc('users/' + firebase.auth().currentUser.email)
+           .update({itemKeyCounter: count + 1})
+       })
+       .catch(err => {
+           console.log('Error getting documents', err)
+       });
+       return count
+    }
 
-    const setPrice = () => {
+    const getItemSite = () => {
+        if (URL.includes("shopee")) {
+            return "shopee"
+        } else if (URL.includes("qoo10")) {
+            return "qoo10"
+        } else if (URL.includes("ebay")) {
+            return "ebay"
+        }
+    }
+
+    const setPrice = async () => {
         if (isNaN(targetPrice)) {
             setError('Target price must be a number')
             setFieldError('Error')
+            setLoading(false)
         }
         else if (targetPrice <= 0) {
             setError('Target price must be positive')
             setFieldError('Error')
+            setLoading(false)
         }
         else if (countDecimals(targetPrice) > 2) {
             setError('Target price must be a valid price (in dollars and cents)')
             setFieldError('Error')
+            setLoading(false)
         }
         else if (targetPrice === '') {
             setError('Target price cannot be empty')
             setFieldError('Error')
+            setLoading(false)
         }
         else {
             var sliced = 0
@@ -45,12 +91,16 @@ export default ({navigation}) => {
             setDisabled(true)
             setFieldError(null)
             setEditable(false)
-            firebase
+            await firebase
             .firestore()
             .collection('users/' + firebase.auth().currentUser.email + '/items')
             .add({
                 URL: value,
-                TargetPrice: sliced == 0 ? parseFloat(targetPrice) : sliced
+                TargetPrice: sliced == 0 ? parseFloat(targetPrice) : sliced,
+                itemKey: "2",
+                edited: false,
+                itemKey: await getItemKey(),
+                site: getItemSite()
             })
             .then(doc => {
                 setTimeout(() => check(doc.id), 10000)
@@ -67,7 +117,7 @@ export default ({navigation}) => {
             setDisabled(false)
             setEditable(true)
             if (doc.exists) {
-                if (doc.data().price == "Broken URL is given, did you copied correctly?") {
+                if (doc.data().name == "Broken URL is given, did you copied correctly?") {
                     setError('Invalid URL entered')
                     setFieldError('Error')
                     doc.ref.delete()
@@ -90,10 +140,11 @@ export default ({navigation}) => {
     }
 
     const addItem = () => {
-        let checkURL = URL.includes('shopee.sg/') || URL.includes('qoo') || URL.includes('amazon') || URL.includes('ebay')
+        let checkURL = URL.includes('shopee.sg/') || URL.includes('qoo') || URL.includes('ebay')
         if (checkURL) {
             value = URL
             // setURL('')
+            setLoading(true)
             setPrice()
         } else {
             console.log(URL)
@@ -104,19 +155,28 @@ export default ({navigation}) => {
         }
     }
 
-    const [URL, setURL] = useState('');
-    const [targetPrice, setTargetPrice] = useState('');
-    const [fieldError, setFieldError] = useState(null);
-    const [error, setError] = useState('')
-    const [disabled, setDisabled] = useState(false)
-    const [editable, setEditable] = useState(true)
-
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
             setFieldError(null)
+            setURL(test)
         });
         return unsubscribe
     }, [navigation]);
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                    <TouchableOpacity style={styles.headerIcon}
+                    onPress={() => {navigation.navigate("Barcode")}}>
+                        <Icon1
+                            name="barcode"
+                            color="#133480"
+                            size={20}
+                        />
+                    </TouchableOpacity>
+            )
+          });
+      }, []);
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
@@ -129,6 +189,7 @@ export default ({navigation}) => {
 
     return (
         <KeyboardAvoidingView style={styles.container}>
+            <ActivityIndicator size="large" color="#0000ff" animating={loading}/>
             <View style={styles.row}>
                 <Text style={styles.header}>Add New Item</Text>
             </View>
@@ -154,7 +215,7 @@ export default ({navigation}) => {
                         style={styles.icon}
                     />
                 }
-                editable={editable}
+                defaultValue={URL}
                 value={URL}
                 onChangeText={(URL) => setURL(URL)}
                 inputContainerStyle={[styles.textField,
@@ -261,6 +322,9 @@ const styles = StyleSheet.create(
         },
         icon: {
             marginRight: 5
-        }
+        },
+        headerIcon: {
+            padding: 20
+        },
     })
 
