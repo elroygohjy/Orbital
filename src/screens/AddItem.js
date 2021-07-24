@@ -53,8 +53,8 @@ export default ({navigation}) => {
     const getItemSite = () => {
         if (URL.includes("shopee")) {
             return "shopee"
-        } else if (URL.includes("qoo10")) {
-            return "qoo10"
+        } else if (URL.includes("qoo")) {
+            return "qoo"
         } else if (URL.includes("ebay")) {
             return "ebay"
         }

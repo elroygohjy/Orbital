@@ -1,6 +1,11 @@
 import React, {useState, useEffect, useFocusEffect, useCallback} from 'react';
 import {StyleSheet, Text, View, KeyboardAvoidingView, Linking,
-TouchableOpacity, BackHandler, SafeAreaView, ScrollView, StatusBar} from 'react-native';
+TouchableOpacity, BackHandler, SafeAreaView, ScrollView, StatusBar
+, useWindowDimensions} from 'react-native';
+import {
+    VictoryChart, VictoryLine, VictoryAxis, VictoryLabel
+} from "victory-native";
+import {format} from 'date-fns'
 import {Button} from "react-native-elements"
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
@@ -13,7 +18,8 @@ import { Rating } from 'react-native-ratings';
 export default ({route, navigation}) => {
 
     var {id, currentPrice, targetPrice, URL, lastUpdate, item, 
-        highestPrice, highestDate, lowestPrice, lowestDate, reviewCount, rating, site} = route.params
+        highestPrice, highestDate, lowestPrice, lowestDate, reviewCount, rating, site,
+        priceArr, dateArr} = route.params
     const [target, setTarget] = useState(targetPrice)
     const [itemName, setItemName] = useState(item)
 
@@ -102,6 +108,62 @@ export default ({route, navigation}) => {
         }
     }
 
+    const ratingComponent = (site, rating, reviewCount) => {
+        if (reviewCount !== '0') {
+            if (site.includes("qoo")) {
+                return (
+                    <View>
+                        <Text
+                            style={styles.ratingText}> Customer Satisfaction:
+                            <Text style={styles.heartRating}>{rating}%</Text>
+                        </Text>
+                        <Rating
+                            type='heart'
+                            ratingCount={10}
+                            imageSize={30}
+                            readonly={true}
+                            startingValue={parseFloat(rating/10)}
+                            // style={{ backgroundColor: "blue" }}
+                        />
+                    </View>
+                )
+            } else {
+                return (
+                    <View>
+                        <Text
+                            style={styles.ratingText}> Rating:
+                            <Text style={styles.starRating}>{rating}</Text>
+                            <Text style={styles.ratingText}>/5</Text>
+                        </Text>
+                        <Rating
+                            type='custom'
+                            ratingCount={5}
+                            imageSize={30}
+                            readonly={true}
+                            startingValue={rating}
+                            ratingColor='#fcba03'
+                            ratingBackgroundColor="#fcba03"
+                          //  style={{ backgroundColor: "blue" }}
+                        />
+                    </View>
+                )
+            }
+        }
+    }
+
+    const date = dateArr.map(x => format(x.toDate(), "d MMM yy"))
+    let data1 = priceArr
+    let data2 = data1.map((x, index) => [parseFloat(x.replace(/[^\d.-]/g, "")), date[index]])
+  
+    let max = Math.max(...data1.map(x => parseFloat(x.replace( 
+        /[^\d.-]/g, "")) + 1))
+        //[price, date], price needs parsefloat
+    let min = Math.min(...data1.map(x => parseFloat(x.replace(
+        /[^\d.-]/g, ""))))
+
+        console.log(max)
+  console.log(min)
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView}>
@@ -114,17 +176,7 @@ export default ({route, navigation}) => {
                 <Text style={styles.price}>Target Price: ${target}</Text>
                 <Text style={styles.price}>Number of Reviews: {reviewCount}</Text>
 
-                <Rating
-                    type='star'
-                    ratingCount={5}
-                    startingValue={rating/getCount()}
-                    readonly={true}
-                    imageSize={60}
-                    showRating
-                    fractions={1}
-                    ratingTextColor={"blue"}
-                    imageSize={35}
-                />
+                {ratingComponent(site, rating, reviewCount)}
             </View>
             <View style={styles.table}>
                 <Table borderStyle={{borderWidth: 1}}>
@@ -138,6 +190,49 @@ export default ({route, navigation}) => {
                 </TableWrapper>
                 </Table>
             </View>
+            <VictoryChart
+                padding={{top: 20, left: 40, right: 30, bottom: 60}}
+                domain={{y: [min, max]}}
+                // style={{paddingTop: 10}
+                domainPadding={30}
+            >
+                <VictoryLine
+                    data={data2}
+                    x={1}
+                    y={0}
+                    fixLabelOverlap={true}
+                    style={{
+                        data: {stroke: "#8cc6e5", strokeWidth: 5},
+                        labels: {fontSize: 15, fill: '#000', fontWeight: 'bold', textAnchor: 'middle'}
+
+                    }}
+                    labelComponent={<VictoryLabel dy={-10} dx={0}/>}
+                    labels={data1}
+
+                />
+                <VictoryAxis
+                    style={{
+                        axis: {stroke: '#A9A9A9', strokeWidth: 3},
+                        axisLabel: {fontSize: 18, fill: '#1F2741', padding: 50},
+                        tickLabels: {fontSize: 12, fill: '#284089', fontWeight: 'bold'},
+                        grid: {stroke: '#121534', strokeWidth: 0.5}
+                    }} dependentAxis
+                    label={"Price"}
+                    tickFormat={tick => '$' + tick}
+                />
+                <VictoryAxis
+                    style={{                        axis: {stroke: '#A9A9A9', strokeWidth: 3},
+                        axisLabel: {fontSize: 18, padding: 35, fill: '#1F2741'},
+                        ticks: {stroke: '#ccc'},
+                        grid: {stroke: '#121534', strokeWidth: 0.5},
+                        tickLabels: {
+                            fontSize: 11, padding: 15, angle: -20, verticalAnchor: 'middle', textAnchor: 'middle',
+                            fill: '#284089', fontWeight: 'bold'
+                        }
+                    }}
+                    label={"Date"}
+                />
+            </VictoryChart>
             <Button
                 buttonStyle={styles.editPrice} 
                 title="Edit Target Price"
@@ -236,6 +331,22 @@ const styles = StyleSheet.create(
         wrapper: { flexDirection: 'row' },
         title: { flex: 1, backgroundColor: '#f6f8fa' },
         row: {  height: 28  },
-        text: { textAlign: 'center' }
+        text: { textAlign: 'center' },
+        starRating: {
+            fontSize: 30,
+            color: '#F1C400',
+            //
+        },
+        ratingText: {
+            fontSize: 20,
+            color: '#000',
+            textAlign: 'center'
+    
+        },
+        heartRating: {
+            fontSize: 30,
+            color: '#E74C3D',
+            //
+        }
     })
 

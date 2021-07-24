@@ -18,11 +18,9 @@ export default ({navigation}) => {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    console.log(data)
-    const URL = await firebase.functions().httpsCallable('barcodeToURL')(data)
-    console.log(URL)
+    const URL = await firebase.functions().httpsCallable('barcodeToURL')({barcode: data})
     // alert('Bar code with type ${type} and data ${data} has been scanned!')
-    // navigation.navigate('Add Item Barcode', {test: URL})
+    navigation.navigate('Add Item Barcode', {test: URL["data"]["success"]})
   };
 
   if (hasPermission === null) {

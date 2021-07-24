@@ -34,7 +34,9 @@ export default ({navigation}) => {
                     lowestDate: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["lowLastUpdate"],
                     reviewCount: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["noOfRatings"],
                     rating: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["rating"],
-                    site: dict.site
+                    site: dict.site,
+                    priceArr: dict.price,
+                    dateArr: dict.dateArr
                 }
             );
         }
@@ -140,7 +142,8 @@ export default ({navigation}) => {
     }
 
     function Item({ title, id, currentPrice, targetPrice, URL, lastUpdate, 
-        highestPrice, highestDate, lowestPrice, lowestDate, reviewCount, rating, site }) {
+        highestPrice, highestDate, lowestPrice, lowestDate, reviewCount, rating, site,
+    priceArr, dateArr }) {
         return (
             <TouchableOpacity style={styles.item}
                 onPress={() => navigation.navigate('Item',
@@ -156,7 +159,9 @@ export default ({navigation}) => {
                     lowestDate: lowestDate,
                     reviewCount: reviewCount,
                     rating: rating,
-                    site: site})}>
+                    site: site,
+                    priceArr: priceArr,
+                    dateArr: dateArr})}>
                 <Text style={styles.title} numberOfLines={2}>{title}</Text>
                 <Text style={styles.currentPrice}>{currentPrice}</Text>
             </TouchableOpacity>
@@ -201,6 +206,8 @@ export default ({navigation}) => {
                         reviewCount={item.reviewCount}
                         rating={item.rating}
                         site={item.site}
+                        priceArr={item.priceArr}
+                        dateArr={item.dateArr}
                         />}
                 keyExtractor={(item, index) => item.id}
             />
