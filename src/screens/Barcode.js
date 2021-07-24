@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { navigationRef } from '../navigators/RootNavigation';
+import firebase from '../../api/authkey'
+import "firebase/functions";
 
 export default ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -14,10 +16,13 @@ export default ({navigation}) => {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    navigation.navigate("Add Item", {test: data})
+    console.log(data)
+    const URL = await firebase.functions().httpsCallable('barcodeToURL')(data)
+    console.log(URL)
+    // alert('Bar code with type ${type} and data ${data} has been scanned!')
+    // navigation.navigate('Add Item Barcode', {test: URL})
   };
 
   if (hasPermission === null) {

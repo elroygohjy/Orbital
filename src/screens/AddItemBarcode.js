@@ -10,9 +10,11 @@ import firebase from 'firebase'
 import { getDevicePushTokenAsync, getExpoPushTokenAsync } from 'expo-notifications';
 import { getInstallReferrerAsync } from 'expo-application';
 
-export default ({navigation}) => {
+export default ({route, navigation}) => {
 
     var value = ''
+    var {test} = route.params
+    console.log(test)
     
     const [URL, setURL] = useState('');
     const [targetPrice, setTargetPrice] = useState('');
@@ -157,6 +159,11 @@ export default ({navigation}) => {
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
             setFieldError(null)
+            console.log(route)
+            if (route.params !== undefined) {
+                console.log(route.params['test'])
+            }
+            setURL(test)
         });
         return unsubscribe
     }, [navigation]);
