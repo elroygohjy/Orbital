@@ -42,7 +42,7 @@ export default ({route, navigation}) => {
                 console.error("Error removing document: ", error);
             })
         }
-        
+
         navigation.reset({routes: [{ name: 'Homepage' }]})
     }
 
@@ -99,12 +99,12 @@ export default ({route, navigation}) => {
             navigation.reset({routes: [{ name: 'Homepage' }]})
             return true;
         };
-    
+
         const backHandler = BackHandler.addEventListener(
           "hardwareBackPress",
           backAction
         );
-    
+
         return () => backHandler.remove();
       }, []);
 
@@ -137,7 +137,7 @@ export default ({route, navigation}) => {
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
         ProximaNovaBold: require('../assets/fonts/ProximaNova-Bold.otf')
     });
-      
+
     if (!loaded) {
         return <AppLoading />;
     }
@@ -184,11 +184,11 @@ export default ({route, navigation}) => {
         }
     }
 
-    const date = item[toggle]["dateArr"].map(x => format(x.toDate(), "d MMM yy"))
+    const date = item[toggle]["dateArr"].map(x => format(x.toDate(), "d MMM yy h:mm a"))
     let data1 = item[toggle]["priceArr"]
     let data2 = data1.map((x, index) => [parseFloat(x.replace(/[^\d.-]/g, "")), date[index]])
-  
-    let max = Math.max(...data1.map(x => parseFloat(x.replace( 
+
+    let max = Math.max(...data1.map(x => parseFloat(x.replace(
         /[^\d.-]/g, "")) + 1))
         //[price, date], price needs parsefloat
     let min = Math.min(...data1.map(x => parseFloat(x.replace(
@@ -246,7 +246,7 @@ export default ({route, navigation}) => {
                     <VictoryScatter
                         size={6}
                         style={{data: { fill: "#8cc6e5" },
-                            labels: {fontSize: 15, fill: '#000', fontWeight: 'bold', textAnchor: 'middle'}}}
+                            labels: {fontSize: 10, fill: '#000', fontWeight: 'bold', textAnchor: 'middle'}}}
                         labelComponent={<VictoryLabel dy={-15} dx={0}/>}
                         labels={data1}/>
                 </VictoryGroup>
@@ -275,33 +275,33 @@ export default ({route, navigation}) => {
                 />
             </VictoryChart>
             <Button
-                buttonStyle={styles.editPrice} 
+                buttonStyle={styles.editPrice}
                 title="Edit Target Price"
                 titleStyle={styles.buttonText}
-                onPress={() => navigation.navigate("Edit Price", 
+                onPress={() => navigation.navigate("Edit Price",
                     {id: item[toggle]["id"], target: target, currentPrice: item[toggle]["currentPrice"]})}
             />
             <Button
-                buttonStyle={styles.delete} 
+                buttonStyle={styles.delete}
                 title="Delete Item"
                 titleStyle={styles.buttonText}
                 onPress={deleteItem}
             />
             <Button
-                buttonStyle={styles.buy} 
+                buttonStyle={styles.buy}
                 title="Buy Now"
                 titleStyle={styles.buttonText}
                 onPress={() => Linking.openURL(item[toggle]["URL"])}
             />
             <Button
-                buttonStyle={styles.editName} 
+                buttonStyle={styles.editName}
                 title="Edit Item Name"
                 titleStyle={styles.buttonText}
-                onPress={() => navigation.navigate("Edit Item Name", 
+                onPress={() => navigation.navigate("Edit Item Name",
                 {id: item[toggle]["id"], item: itemName})}
             />
             <Button
-                buttonStyle={styles.shareButton} 
+                buttonStyle={styles.shareButton}
                 title="Share"
                 titleStyle={styles.buttonText}
                 onPress={onShare}
@@ -417,7 +417,7 @@ const styles = StyleSheet.create(
             fontSize: 20,
             color: '#000',
             textAlign: 'center'
-    
+
         },
         heartRating: {
             fontSize: 30,
