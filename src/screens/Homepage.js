@@ -48,28 +48,31 @@ export default ({navigation}) => {
     });
 
     const handleSearch = text => {
+        
+        var match = []
         if (text == "") {
-            const match =
+            match =
             list
             .filter(function(x){
                 return x !== undefined
             })
-            setData(match)
+            // setData(match)
+        } else {
+            const formattedQuery = text.toLowerCase();
+            match =
+            list
+            .filter(function(x){
+                return x !== undefined
+            })
+            .filter(function(x) {
+                return x[0]['name'].toLowerCase().includes(formattedQuery)
+            })
         }
-        const formattedQuery = text.toLowerCase();
-        const match =
-        list
-        .filter(function(x){
-            return x !== undefined
-        })
-        .filter(function(x) {
-            return x[0]['name'].toLowerCase().includes(formattedQuery)
-        })
-        setData(match)
         setQuery(text)
+        setFilter(site, match)
     };
 
-    const setFilter = (site) => {
+    const setFilter = (site, list) => {
         if (site === "all") {
             const match =
             list
@@ -127,6 +130,7 @@ export default ({navigation}) => {
     const [freq, setFreq] = useState("Select Option")
     const [interval, setInterval] = useState(1000)
     const [loading, setLoading] = useState(false)
+    const [site, setSite] = useState('all')
 
     const filtered = () =>
     setData(list.filter(function(x){
@@ -309,7 +313,8 @@ export default ({navigation}) => {
                             options={['All', 'Shopee', 'eBay', 'Qoo10']}
                             onSelect={(index, value) => {
                                 const site = ['all', 'shopee', 'ebay', 'qoo']
-                                setFilter(site[index])
+                                setFilter(site[index], list)
+                                setSite(site[index])
                             }}
                             dropdownStyle={styles.options}
                             dropdownTextStyle={styles.optionsText}/>
