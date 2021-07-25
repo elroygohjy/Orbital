@@ -71,14 +71,14 @@ export default ({navigation}) => {
 
     const setFilter = (site) => {
         if (site === "all") {
-            const match = 
+            const match =
             list
             .filter(function(x){
                 return x !== undefined
             })
             setData(match)
         } else {
-            const match = 
+            const match =
             list
             .filter(function(x){
                 return x !== undefined
@@ -102,14 +102,14 @@ export default ({navigation}) => {
             .doc('users/' + firebase.auth().currentUser.email)
             .get()
             .then(doc => {
-                 const selected = doc.data().interval.toString()
+                 const selected = doc.data().interval === undefined ? 0 : doc.data().interval.toString()
                  const options = {"Infinity": 'No notification',
-                 "1": '1 hour', 
-                 "3": '3 hours', 
-                 "8": '8 hours', 
-                 "24": '24 hours', 
+                 "1": '1 hour',
+                 "3": '3 hours',
+                 "8": '8 hours',
+                 "24": '24 hours',
                  "168": '7 days'}
-        
+
                  // console.log(selected)
                  setFreq(options[selected])
             })
@@ -134,7 +134,7 @@ export default ({navigation}) => {
     }))
 
     // hacky fix for list not rendering on logins
-    
+
     setTimeout(() => {
         setQuery('s')
         handleSearch('')
@@ -170,16 +170,12 @@ export default ({navigation}) => {
                         />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.icon}
-                    onPress={() => {
+                    onPress={async () => {
                         setLoading(true)
-                        firebase.functions().httpsCallable('scheduledWebScrap')()    
-                        setTimeout(() => {
-                            setData(list.filter(function(x){
-                                return x !== undefined
-                            }))
-                            navigation.reset({routes: [{ name: 'Homepage' }]});
-                            setLoading(false)
-                        }, 10000)
+                        await firebase.functions().httpsCallable('scheduledWebScrap')()
+                        navigation.reset({routes: [{ name: 'Homepage' }]})
+                        setLoading(false)
+
                     }}>
                         <Icon2
                             name="sync"
@@ -214,7 +210,7 @@ export default ({navigation}) => {
         for (let i = 0; i < item.length; i++) {
             prices.push(<Text style={styles.currentPrice}>{item[i]['currentPrice']}</Text>)
         }
-        
+
         return prices
     }
 
@@ -277,7 +273,6 @@ export default ({navigation}) => {
                             style={styles.select}
                             options={['No notification','1 hour', '3 hours', '8 hours', '24 hours', '7 days']}
                             onSelect={async (index, value) => {
-                                console.log(index)
                                 setFreq(value)
                                 const optionsInTime = [Infinity, 1, 3, 8, 24, 24 * 7]
                                 const id = firebase.auth().currentUser.email
