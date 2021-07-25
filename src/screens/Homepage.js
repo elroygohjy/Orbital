@@ -18,27 +18,31 @@ export default ({navigation}) => {
     const ids = []
 
     const list = getList.map(function(dict) {
-        if (!ids.includes(dict.id)) {
-            ids.push(dict.id)
-            return (
-                {
-                    id: dict.id,
-                    name: dict.name,
-                    currentPrice: dict.price === undefined ? dict.price : dict.price[dict.price.length-1],
-                    targetPrice: dict.TargetPrice,
-                    URL: dict.URL,
-                    lastUpdate: dict.lastUpdate,
-                    highestPrice: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["highestPrice"],
-                    highestDate: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["highLastUpdate"],
-                    lowestPrice: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["lowestPrice"],
-                    lowestDate: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["lowLastUpdate"],
-                    reviewCount: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["noOfRatings"],
-                    rating: dict.detailTable === undefined ? dict.detailTable : dict.detailTable["rating"],
-                    site: dict.site,
-                    priceArr: dict.price,
-                    dateArr: dict.dateArr
-                }
-            );
+        // console.log(typeof dict[0] === 'undefined' ? "s" : dict[0]["id"])
+        if (typeof dict[0] !== 'undefined' && !ids.includes(dict[0]["id"])) {
+            ids.push(dict[0]["id"])
+            var obj = []
+            for (let i = 0; i < dict.length; i++) {
+                obj.push({
+                    id: dict[i]["id"],
+                    name: dict[i]["name"],
+                    currentPrice: dict[i]["price"] === undefined ? dict[i]["price"] : dict[i]["price"][dict[i]["price"].length-1],
+                    targetPrice: dict[i]["TargetPrice"],
+                    URL: dict[i]["URL"],
+                    lastUpdate: dict[i]["lastUpdate"],
+                    highestPrice: dict[i]["detailTable"] === undefined ? dict[i]["detailTable"] : dict[i]["detailTable"]["highestPrice"],
+                    highestDate: dict[i]["detailTable"] === undefined ? dict[i]["detailTable"] : dict[i]["detailTable"]["highLastUpdate"],
+                    lowestPrice: dict[i]["detailTable"] === undefined ? dict[i]["detailTable"] : dict[i]["detailTable"]["lowestPrice"],
+                    lowestDate: dict[i]["detailTable"] === undefined ? dict[i]["detailTable"] : dict[i]["detailTable"]["lowLastUpdate"],
+                    reviewCount: dict[i]["detailTable"] === undefined ? dict[i]["detailTable"] : dict[i]["detailTable"]["noOfRatings"],
+                    rating: dict[i]["detailTable"] === undefined ? dict[i]["detailTable"] : dict[i]["detailTable"]["rating"],
+                    site: dict[i]["site"],
+                    priceArr: dict[i]["price"],
+                    dateArr: dict[i]["dateArr"]
+                })
+            }
+            // console.log(obj)
+            return obj
         }
     });
 
@@ -58,11 +62,37 @@ export default ({navigation}) => {
             return x !== undefined
         })
         .filter(function(x) {
-            return x.name.toLowerCase().includes(formattedQuery)
+            return x[0]['name'].toLowerCase().includes(formattedQuery)
         })
         setData(match)
         setQuery(text)
     };
+
+    const setFilter = (site) => {
+        if (site === "all") {
+            const match = 
+            list
+            .filter(function(x){
+                return x !== undefined
+            })
+            setData(match)
+        } else {
+            const match = 
+            list
+            .filter(function(x){
+                return x !== undefined
+            })
+            .filter(function(x) {
+                for (let i = 0; i < x.length; i++) {
+                    if (x[i]['site'] === site) {
+                        return true
+                    }
+                }
+                return false
+            })
+            setData(match)
+        }
+    }
 
     const [query, setQuery] = useState('');
     const [data, setData] = useState(list)
@@ -141,29 +171,22 @@ export default ({navigation}) => {
         return <AppLoading />;
     }
 
-    function Item({ title, id, currentPrice, targetPrice, URL, lastUpdate, 
-        highestPrice, highestDate, lowestPrice, lowestDate, reviewCount, rating, site,
-    priceArr, dateArr }) {
+    const getPrices = (item) => {
+        var prices = []
+        for (let i = 0; i < item.length; i++) {
+            prices.push(<Text style={styles.currentPrice}>{item[i]['currentPrice']}</Text>)
+        }
+        
+        return prices
+    }
+
+    function Item({ item }) {
         return (
             <TouchableOpacity style={styles.item}
                 onPress={() => navigation.navigate('Item',
-                    {id : id, 
-                    currentPrice : currentPrice,
-                    targetPrice: targetPrice,
-                    URL: URL, 
-                    lastUpdate: lastUpdate,
-                    item: title, 
-                    highestPrice: highestPrice,
-                    highestDate: highestDate,
-                    lowestPrice: lowestPrice,
-                    lowestDate: lowestDate,
-                    reviewCount: reviewCount,
-                    rating: rating,
-                    site: site,
-                    priceArr: priceArr,
-                    dateArr: dateArr})}>
-                <Text style={styles.title} numberOfLines={2}>{title}</Text>
-                <Text style={styles.currentPrice}>{currentPrice}</Text>
+                    {item: item})}>
+                <Text style={styles.title} numberOfLines={2}>{item[0]['name']}</Text>
+                {getPrices(item)}
             </TouchableOpacity>
         );
     }
@@ -193,21 +216,7 @@ export default ({navigation}) => {
                 data={data}
                 extraData={data}
                 renderItem={({ item }) =>
-                    <Item title={item.name}
-                        id={item.id}
-                        currentPrice={item.currentPrice}
-                        targetPrice={item.targetPrice}
-                        URL={item.URL}
-                        lastUpdate={item.lastUpdate}
-                        highestPrice={item.highestPrice}
-                        highestDate={item.highestDate}
-                        lowestPrice={item.lowestPrice}
-                        lowestDate={item.lowestDate}
-                        reviewCount={item.reviewCount}
-                        rating={item.rating}
-                        site={item.site}
-                        priceArr={item.priceArr}
-                        dateArr={item.dateArr}
+                    <Item item={item}
                         />}
                 keyExtractor={(item, index) => item.id}
             />
@@ -228,6 +237,7 @@ export default ({navigation}) => {
                             style={styles.select}
                             options={['No notification','1 hour', '3 hours', '8 hours', '24 hours', '7 days']}
                             onSelect={async (index, value) => {
+                                console.log(index)
                                 setFreq(value)
                                 const optionsInTime = [Infinity, 1, 3, 8, 24, 24 * 7]
                                 const id = firebase.auth().currentUser.email
@@ -259,10 +269,13 @@ export default ({navigation}) => {
                         <Text style={styles.notifs}>Filter By </Text>
                         <ModalDropdown
                             textStyle={styles.dropdown}
-                            defaultValue={freq}
+                            defaultValue={"Platform"}
                             style={styles.select}
-                            options={['Price (highest first)','Price (lowest first)', 'Percentage difference between current and target price (lowest first)']}
-                            onSelect={() =>{}}
+                            options={['All', 'Shopee', 'eBay', 'Qoo10']}
+                            onSelect={(index, value) => {
+                                const site = ['all', 'shopee', 'ebay', 'qoo']
+                                setFilter(site[index])
+                            }}
                             dropdownStyle={styles.options}
                             dropdownTextStyle={styles.optionsText}/>
                         <Pressable
