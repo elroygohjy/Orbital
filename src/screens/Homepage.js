@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text,
-    TouchableOpacity, SafeAreaView, FlatList, TextInput, Modal, Pressable} from 'react-native';
+    TouchableOpacity, SafeAreaView, FlatList, TextInput, Modal, Pressable,
+ActivityIndicator} from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome"
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
@@ -94,12 +95,38 @@ export default ({navigation}) => {
         }
     }
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", async () => {
+            await firebase
+            .firestore()
+            .doc('users/' + firebase.auth().currentUser.email)
+            .get()
+            .then(doc => {
+                 const selected = doc.data().interval.toString()
+                 const options = {"Infinity": 'No notification',
+                 "1": '1 hour', 
+                 "3": '3 hours', 
+                 "8": '8 hours', 
+                 "24": '24 hours', 
+                 "168": '7 days'}
+        
+                 // console.log(selected)
+                 setFreq(options[selected])
+            })
+            .catch(err => {
+                console.log('Error getting documents', err)
+            });
+        });
+        return unsubscribe
+    }, [navigation]);
+
     const [query, setQuery] = useState('');
     const [data, setData] = useState(list)
     const [modalVisible, setModalVisible] = useState(false);
     const [modal2Visible, setModal2Visible] = useState(false);
     const [freq, setFreq] = useState("Select Option")
     const [interval, setInterval] = useState(1000)
+    const [loading, setLoading] = useState(false)
 
     const filtered = () =>
     setData(list.filter(function(x){
@@ -107,6 +134,7 @@ export default ({navigation}) => {
     }))
 
     // hacky fix for list not rendering on logins
+    
     setTimeout(() => {
         setQuery('s')
         handleSearch('')
@@ -142,7 +170,17 @@ export default ({navigation}) => {
                         />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.icon}
-                    onPress={() => firebase.functions().httpsCallable('scheduledWebScrap2')()}>
+                    onPress={() => {
+                        setLoading(true)
+                        firebase.functions().httpsCallable('scheduledWebScrap')()    
+                        setTimeout(() => {
+                            setData(list.filter(function(x){
+                                return x !== undefined
+                            }))
+                            navigation.reset({routes: [{ name: 'Homepage' }]});
+                            setLoading(false)
+                        }, 10000)
+                    }}>
                         <Icon2
                             name="sync"
                             color="#133480"
@@ -191,8 +229,11 @@ export default ({navigation}) => {
         );
     }
 
+   // console.log(data)
+
     return (
         <SafeAreaView style={styles.container}>
+            {loading && <ActivityIndicator size="large" color="#0000ff" animating={loading}/>}
             <FlatList
                 ListHeaderComponent={
                     <View style={styles.searchBar}>
@@ -216,8 +257,7 @@ export default ({navigation}) => {
                 data={data}
                 extraData={data}
                 renderItem={({ item }) =>
-                    <Item item={item}
-                        />}
+                    <Item item={item}/>}
                 keyExtractor={(item, index) => item.id}
             />
             <Modal

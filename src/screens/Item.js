@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useFocusEffect, useCallback} from 'react';
 import {StyleSheet, Text, View, KeyboardAvoidingView, Linking,
 TouchableOpacity, BackHandler, SafeAreaView, ScrollView, StatusBar
-, useWindowDimensions, Modal, Pressable} from 'react-native';
+, useWindowDimensions, Modal, Pressable, Share} from 'react-native';
 import {
     VictoryChart, VictoryLine, VictoryAxis, VictoryLabel, VictoryGroup, VictoryScatter
 } from "victory-native";
@@ -53,6 +53,25 @@ export default ({route, navigation}) => {
         }
         return options
     }
+
+    const onShare = async () => {
+        try {
+          const result = await Share.share({
+            message: item[toggle]["URL"],
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+              // shared with activity type of result.activityType
+            } else {
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            // dismissed
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -272,7 +291,7 @@ export default ({route, navigation}) => {
                 buttonStyle={styles.buy} 
                 title="Buy Now"
                 titleStyle={styles.buttonText}
-                onPress={() => Linking.openURL(URL)}
+                onPress={() => Linking.openURL(item[toggle]["URL"])}
             />
             <Button
                 buttonStyle={styles.editName} 
@@ -280,6 +299,12 @@ export default ({route, navigation}) => {
                 titleStyle={styles.buttonText}
                 onPress={() => navigation.navigate("Edit Item Name", 
                 {id: item[toggle]["id"], item: itemName})}
+            />
+            <Button
+                buttonStyle={styles.shareButton} 
+                title="Share"
+                titleStyle={styles.buttonText}
+                onPress={onShare}
             />
             </ScrollView>
             <Modal
@@ -442,6 +467,12 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova',
             fontSize: 15,
             textAlign: "center"
+        },
+        shareButton: {
+            backgroundColor: "#0057a3",
+            borderRadius: 20,
+            width: 295,
+            marginBottom: 20
         },
         notifs: {
             fontFamily: 'ProximaNovaBold',

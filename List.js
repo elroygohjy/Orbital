@@ -80,9 +80,9 @@ function List() {
                                     return itemArr
                                 }))
                                 // console.log(docList)
+                                
                                 if (isMounted.current) {
-                                    setData(docList,
-                                    (e) => console.log("error"))
+                                    setData(docList)
                                 }
                             })
                             } else {
