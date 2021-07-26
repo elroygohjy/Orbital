@@ -252,7 +252,7 @@ export default ({navigation}) => {
                         size={25}
                         style={styles.filter}
                         onPress={() => setModal2Visible(!modal2Visible)}
-                    />
+                        />
                     </View>}
                 data={data}
                 extraData={data}
@@ -355,7 +355,8 @@ const styles = StyleSheet.create(
             paddingHorizontal: 20,
             fontFamily: 'ProximaNova',
             fontSize: 20,
-            color: 'black'
+            color: 'black',
+            flex: 1
         },
         item: {
             backgroundColor: 'white',
@@ -444,8 +445,8 @@ const styles = StyleSheet.create(
             borderRadius: 20,
             marginTop: 5
         },
-        filter: {
-            paddingLeft: "45%"
+        filter:{
+            paddingRight: 10
         }
     })
 
