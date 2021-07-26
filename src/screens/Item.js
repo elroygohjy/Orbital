@@ -195,8 +195,8 @@ export default ({route, navigation}) => {
         /[^\d.-]/g, ""))))
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView style={styles.scrollView}>
+        
+            <ScrollView>
             <View style={styles.row}>
                 <Text style={styles.header}>Item Details</Text>
             </View>
@@ -306,7 +306,6 @@ export default ({route, navigation}) => {
                 titleStyle={styles.buttonText}
                 onPress={onShare}
             />
-            </ScrollView>
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -336,7 +335,7 @@ export default ({route, navigation}) => {
                 </View>
             </View>
             </Modal>
-        </SafeAreaView>
+        </ScrollView>
     );
 }
 
@@ -346,8 +345,7 @@ const styles = StyleSheet.create(
             paddingHorizontal: '10%',
             flexDirection: 'column',
             flex: 1,
-            justifyContent: 'flex-start',
-            alignItems: 'center',
+            
             fontFamily: 'ProximaNova',
             paddingTop: StatusBar.currentHeight
         },
@@ -499,6 +497,6 @@ const styles = StyleSheet.create(
             padding: 10,
             borderRadius: 20,
             marginTop: 5
-        },
+        }
     })
 

@@ -16,7 +16,7 @@ export const registerForPushNotificationsAsync = async () => {
         const id = firebase.auth().currentUser.email
         let userDB = await firebase.firestore().collection('users').doc(id).get()
         if (!userDB.exists) {
-            await firebase.firestore().collection('users').doc(id).set({itemKeyCounter: 1})
+            await firebase.firestore().collection('users').doc(id).set({itemKeyCounter: 1, darkMode: false})
         }
         if (Constants.isDevice) {
             const {status: existingStatus} = await Notifications.getPermissionsAsync()

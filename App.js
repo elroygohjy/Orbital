@@ -76,6 +76,7 @@ const DrawerNavigator = () => {
     return (
         <NavigationContainer ref={navigationRef} independent={true}>
         <Drawer.Navigator
+            drawerStyle={{backgroundColor: '#AAAAAA'}}
             drawerContent={props => <CustomDrawerContent {...props} />}
             drawerContentOptions={{
                 labelStyle: styles.home
