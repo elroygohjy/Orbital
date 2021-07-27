@@ -28,7 +28,7 @@ export default ({route, navigation}) => {
             headerTitle: "Scanner",
             headerLeft: () => (
                 <TouchableOpacity style={styles.icon}
-                onPress={() => navigation.navigate('Add Item 2')}>
+                onPress={() => loading ? navigation.navigate('Add Item 2') : {}}>
                     <Icon1
                         name="arrow-left"
                         color="#133480"
@@ -41,7 +41,7 @@ export default ({route, navigation}) => {
 
     useEffect(() => {
         const backAction = () => {
-            navigation.reset({routes: [{ name: 'Add Item' }]})
+          loading ? navigation.reset({routes: [{ name: 'Add Item 2' }]}) : {}
             return true;
         };
 

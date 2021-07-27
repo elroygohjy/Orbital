@@ -8,6 +8,7 @@ import AppLoading from 'expo-app-loading';
 import Icon from "react-native-vector-icons/FontAwesome"
 import firebase from '../../api/authkey'
 import "firebase/functions";
+import { Dimensions } from 'react-native';
 
 export default ({navigation}) => {
 
@@ -208,8 +209,7 @@ const styles = {"true": StyleSheet.create( // dark mode
             backgroundColor: "red",
             borderRadius: 20,
             width: 60,
-            marginLeft: 115,
-            marginBottom: 0
+            marginLeft: '52%'
         },
         buttonText: {
             fontFamily: 'ProximaNova'
@@ -322,8 +322,7 @@ const styles = {"true": StyleSheet.create( // dark mode
                 backgroundColor: "red",
                 borderRadius: 20,
                 width: 60,
-                marginLeft: 115,
-                marginBottom: 0
+                marginLeft: '52%'
             },
             buttonText: {
                 fontFamily: 'ProximaNova'

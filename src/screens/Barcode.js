@@ -23,21 +23,21 @@ export default ({navigation}) => {
       navigation.setOptions({
           headerTitle: "Scanner",
           headerLeft: () => (
-            <TouchableOpacity style={styles.icon}
-            onPress={() => navigation.navigate('Add Item')}>
-                <Icon1
-                    name="arrow-left"
-                    color="#133480"
-                    size={20}
-                />
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.icon}
+              onPress={() => loading ? navigation.navigate('Add Item') : {}}>
+                  <Icon1
+                      name="arrow-left"
+                      color="#133480"
+                      size={20}
+                  />
+              </TouchableOpacity>
           )
         });
   }, []);
 
   useEffect(() => {
     const backAction = () => {
-        navigation.reset({routes: [{ name: 'Add Item' }]})
+        loading ? navigation.reset({routes: [{ name: 'Add Item' }]}) : {}
         return true;
     };
 

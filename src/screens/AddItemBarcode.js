@@ -215,6 +215,7 @@ export default ({route, navigation}) => {
             <ActivityIndicator size="large" color="#0000ff" style={{paddingTop: 12}} animating={loading}/>
             <View style={styles.row}>
                 <Text style={styles.header}>Add New Item</Text>
+                <Text style={styles.message}>Item URL was obtained successfully. Set a target price now.</Text>
             </View>
             <View style={styles.error}>
                 {fieldError && <Text style={styles.errorText}>
@@ -273,14 +274,21 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova'
         },
         row: {
-            flexDirection: 'row',
+            flexDirection: 'column',
             marginTop: 100,
             marginBottom: 20,
+            fontFamily: 'ProximaNova'
+        },
+        message: {
             fontFamily: 'ProximaNova',
+            fontSize: 15,
+            textAlign: 'center',
+            padding: 13
         },
         header: {
             fontFamily: 'ProximaNovaBold',
             fontSize: 30,
+            textAlign: 'center'
         },
         textBox: {
             fontFamily: 'ProximaNova',
