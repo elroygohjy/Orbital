@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, KeyboardAvoidingView} from 'react-native';
+import {StyleSheet, Text, View, 
+    KeyboardAvoidingView, BackHandler, TouchableOpacity} from 'react-native';
 import {Input, Button} from "react-native-elements"
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import Icon from "react-native-vector-icons/FontAwesome"
 import firebase from 'firebase'
 import { LogBox } from 'react-native';
+import Icon1 from "react-native-vector-icons/FontAwesome"
 
 LogBox.ignoreAllLogs();
 
@@ -75,6 +77,35 @@ export default ({route, navigation}) => {
         });
         return unsubscribe
     }, [navigation]);
+
+    useEffect(() => {
+        const backAction = () => {
+            navigation.goBack()
+            return true;
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction
+        );
+    
+        return () => backHandler.remove();
+    }, []);
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity style={styles.headerIcon}
+                onPress={() => navigation.goBack()}>
+                    <Icon1
+                        name="arrow-left"
+                        color="#133480"
+                        size={20}
+                    />
+                </TouchableOpacity>
+            )
+          });
+    }, []);
 
     let [loaded] = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
@@ -188,6 +219,9 @@ const styles = StyleSheet.create(
         },
         icon: {
             marginRight: 5
+        },
+        headerIcon: {
+            padding: 20
         }
     })
 

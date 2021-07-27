@@ -274,7 +274,7 @@ export default ({navigation}) => {
 
     return (
         <KeyboardAvoidingView style={styles[isDark.toString()].container}>
-            <ActivityIndicator size="large" color="#0000ff" animating={loading}/>
+            <ActivityIndicator size="large" color="#0000ff" style={{paddingTop: 12}} animating={loading}/>
             <View style={styles[isDark.toString()].row}>
                 <Text style={styles[isDark.toString()].header}>Add New Item</Text>
             </View>
