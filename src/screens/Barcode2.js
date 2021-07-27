@@ -41,7 +41,7 @@ export default ({route, navigation}) => {
 
     useEffect(() => {
         const backAction = () => {
-            navigation.reset({routes: [{ name: 'Homepage' }]})
+            navigation.reset({routes: [{ name: 'Add Item' }]})
             return true;
         };
 
@@ -90,7 +90,7 @@ export default ({route, navigation}) => {
       <View>
           <Text style={styles.validate}>Validating input URL...</Text>
           <Text style={styles.message}>If the URL is invalid, you will be redirected to the scanner.
-           This may take up to 20 seconds.</Text>     
+           This may take up to 5 seconds.</Text>     
         <ActivityIndicator size="large" color="#0000ff" style={{paddingTop: 12}} animating={loading}/>
       </View>
     )

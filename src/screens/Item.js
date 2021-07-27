@@ -215,8 +215,8 @@ export default ({route, navigation}) => {
                             imageSize={30}
                             readonly={true}
                             startingValue={parseFloat(rating/10)}
-                            tintColor='#b3b1b1'
-                            style={{backgroundColor: '#b3b1b1'}}
+                            tintColor='#e0dede'
+                            // style={{backgroundColor: '#b3b1b1'}}
                         />
                     </View>
                 )
@@ -234,7 +234,7 @@ export default ({route, navigation}) => {
                             imageSize={30}
                             readonly={true}
                             startingValue={rating}
-                            tintColor="#efefef"
+                            tintColor='#e0dede'
                           //  style={{ backgroundColor: "blue" }}
                         />
                     </View>
