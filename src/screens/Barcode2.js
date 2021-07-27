@@ -7,47 +7,51 @@ import { navigationRef } from '../navigators/RootNavigation';
 import firebase from '../../api/authkey'
 import "firebase/functions";
 
-export default ({navigation}) => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [loading, setLoading] = useState(false);
+export default ({route, navigation}) => {
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+    var {key} = route.params
+    // console.log(key)
 
-  useEffect(() => {
-      navigation.setOptions({
-          headerTitle: "Scanner",
-          headerLeft: () => (
-            <TouchableOpacity style={styles.icon}
-            onPress={() => navigation.navigate('Add Item')}>
-                <Icon1
-                    name="arrow-left"
-                    color="#133480"
-                    size={20}
-                />
-            </TouchableOpacity>
-          )
-        });
-  }, []);
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const backAction = () => {
-        navigation.reset({routes: [{ name: 'Homepage' }]})
-        return true;
-    };
+    useEffect(() => {
+        (async () => {
+        const { status } = await BarCodeScanner.requestPermissionsAsync();
+        setHasPermission(status === 'granted');
+        })();
+    }, []);
 
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
+    useEffect(() => {
+        navigation.setOptions({
+            headerTitle: "Scanner",
+            headerLeft: () => (
+                <TouchableOpacity style={styles.icon}
+                onPress={() => navigation.navigate('Add Item 2')}>
+                    <Icon1
+                        name="arrow-left"
+                        color="#133480"
+                        size={20}
+                    />
+                </TouchableOpacity>
+            )
+            });
+    }, []);
 
-    return () => backHandler.remove();
-  }, []);
+    useEffect(() => {
+        const backAction = () => {
+            navigation.reset({routes: [{ name: 'Homepage' }]})
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+        );
+
+        return () => backHandler.remove();
+    }, []);
 
   const handleBarCodeScanned = async ({ type, data }) => {
     console.log('test')
@@ -58,15 +62,15 @@ export default ({navigation}) => {
       await firebase.functions().httpsCallable('barcodeToURL')({barcode: data})
       .then((doc) => {
         if (doc["data"]["success"]) {
-          navigation.navigate('Add Item Barcode', {test: doc["data"]["success"]})
+          navigation.navigate('Add Item Barcode 2', {test: doc["data"]["success"], key: key})
         } else {
-          navigation.reset({routes: [{ name: 'Barcode' }]})
+          navigation.reset({routes: [{ name: 'Barcode 2' }]})
         }
       })
       .catch(
         (error) => {
           console.log(error)
-          navigation.reset({routes: [{ name: 'Barcode' }]})
+          navigation.reset({routes: [{ name: 'Barcode 2' }]})
         })
 
     // URL["data"]["success"] && URL["data"]["success"].includes("ebay")

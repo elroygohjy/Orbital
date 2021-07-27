@@ -72,6 +72,7 @@ export default ({route, navigation}) => {
                 }
                 defaultValue={itemName}
                 value={itemName}
+                multiline={true}
                 onChangeText={(itemName) => setItemName(itemName)}
                 inputContainerStyle={[styles.textField, 
                     fieldError

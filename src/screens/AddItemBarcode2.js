@@ -14,7 +14,7 @@ import { getInstallReferrerAsync } from 'expo-application';
 export default ({route, navigation}) => {
 
     var value = ''
-    var {test} = route.params
+    var {test, key} = route.params
     // console.log(test)
     
     const [URL, setURL] = useState('');
@@ -32,25 +32,6 @@ export default ({route, navigation}) => {
         else if (Math.floor(value) !== value)
             return value.toString().split(".")[1].length || 0;
         return 0;
-    }
-    
-    const getItemKey = async () => {
-       var count = 0;
-       await firebase
-       .firestore()
-       .doc('users/' + firebase.auth().currentUser.email)
-       .get()
-       .then(doc => {
-           count = doc.data().itemKeyCounter
-           firebase
-           .firestore()
-           .doc('users/' + firebase.auth().currentUser.email)
-           .update({itemKeyCounter: count + 1})
-       })
-       .catch(err => {
-           console.log('Error getting documents', err)
-       });
-       return count
     }
 
     const getItemSite = () => {
@@ -101,7 +82,7 @@ export default ({route, navigation}) => {
                 TargetPrice: sliced == 0 ? parseFloat(targetPrice) : sliced,
                 itemKey: "2",
                 edited: false,
-                itemKey: await getItemKey(),
+                itemKey: key,
                 site: getItemSite()
             })
             .then(doc => {
@@ -161,9 +142,9 @@ export default ({route, navigation}) => {
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
             setFieldError(null)
-            console.log(route)
+            // console.log(route)
             if (route.params !== undefined) {
-                console.log(route.params['test'])
+                // console.log(route.params['test'])
             }
             setURL(test)
         });

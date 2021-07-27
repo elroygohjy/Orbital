@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, KeyboardAvoidingView,
-ActivityIndicator, TouchableOpacity} from 'react-native';
+ActivityIndicator, TouchableOpacity, BackHandler} from 'react-native';
 import {Input, Button} from "react-native-elements"
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
@@ -21,6 +21,10 @@ export default ({navigation}) => {
     const [disabled, setDisabled] = useState(false)
     const [editable, setEditable] = useState(true)
     const [loading, setLoading] = useState(false)
+    const [isDark, setDark] = useState(false)
+    const [modeLoaded, setModeLoaded] = useState(false)
+
+    // console.log(isDark)
 
     var countDecimals = function(value) {
         if (!value.includes(".")) {
@@ -96,7 +100,6 @@ export default ({navigation}) => {
             .add({
                 URL: value,
                 TargetPrice: sliced == 0 ? parseFloat(targetPrice) : sliced,
-                itemKey: "2",
                 edited: false,
                 itemKey: await getItemKey(),
                 site: getItemSite()
@@ -117,6 +120,7 @@ export default ({navigation}) => {
             setEditable(true)
             if (doc.exists) {
                 if (doc.data().name == "Broken URL is given, did you copied correctly?") {
+                    setLoading(false)
                     setError('Invalid URL entered')
                     setFieldError('Error')
                     doc.ref.delete()
@@ -163,8 +167,19 @@ export default ({navigation}) => {
 
     useEffect(() => {
         navigation.setOptions({
+            headerStyle: {backgroundColor: '#AAAAAA'},
+            headerLeft: () => (
+                <TouchableOpacity style={styles[isDark.toString()].headerIcon}
+                onPress={() => navigation.replace('Homepage')}>
+                    <Icon1
+                        name="arrow-left"
+                        color="#133480"
+                        size={20}
+                    />
+                </TouchableOpacity>
+            ),
             headerRight: () => (
-                    <TouchableOpacity style={styles.headerIcon}
+                    <TouchableOpacity style={styles[isDark.toString()].headerIcon}
                     onPress={() => {navigation.navigate("Barcode")}}>
                         <Icon1
                             name="barcode"
@@ -176,7 +191,21 @@ export default ({navigation}) => {
           });
       }, []);
 
-    let [loaded] = useFonts({
+    useEffect(() => {
+    const backAction = () => {
+        navigation.reset({routes: [{ name: 'Homepage' }]})
+        return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+    );
+
+    return () => backHandler.remove();
+    }, []);
+
+    let loaded = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
         ProximaNovaBold: require('../assets/fonts/ProximaNova-Bold.otf')
     });
@@ -185,18 +214,33 @@ export default ({navigation}) => {
         return <AppLoading />;
     }
 
-    return (
-        <KeyboardAvoidingView style={styles.container}>
-            <ActivityIndicator size="large" color="#0000ff" animating={loading}/>
-            <View style={styles.row}>
-                <Text style={styles.header}>Add New Item</Text>
-            </View>
-            <View style={styles.error}>
-                {fieldError && <Text style={styles.errorText}>
-                    {error.toString()}</Text>}
-            </View>
-            <Input
-                style={styles.textBox}
+    if (!modeLoaded) {
+        // console.log("loading")
+        return <AppLoading 
+            startAsync={async () => 
+                await firebase
+                .firestore()
+                .doc('users/' + firebase.auth().currentUser.email)
+                .get()
+                .then(doc => {
+                    setDark(doc.data().darkMode)
+                    // console.log(isDark)
+                })
+                .catch(err => {
+                    console.log('Error getting documents', err)
+                })
+            }
+            onError={() => {}}
+            onFinish={() => setModeLoaded(true)}
+        />
+    }
+
+    const addItemURL = () => {
+        var fields = []
+        for (let i = 0; i < 1; i++) {
+            fields.push(<Input
+                style={styles[isDark.toString()].textBox}
+                multiline={true}
                 leftIcon={
                     <Icon
                         name="internet-explorer"
@@ -210,22 +254,37 @@ export default ({navigation}) => {
                         color="#133480"
                         size={15}
                         onPress={() => editable ? setURL('') : {}}
-                        style={styles.icon}
+                        style={styles[isDark.toString()].icon}
                     />
                 }
                 defaultValue={URL}
                 value={URL}
                 onChangeText={(URL) => setURL(URL)}
-                inputContainerStyle={[styles.textField,
+                inputContainerStyle={[styles[isDark.toString()].textField,
                     fieldError
-                        ? styles.invalid
+                        ? styles[isDark.toString()].invalid
                         : null]}
                 underlineColorAndroid="transparent"
                 placeholder="Enter URL"
                 autoCapitalize="none"
-            />
+            />)
+        }
+        return fields
+    }
+
+    return (
+        <KeyboardAvoidingView style={styles[isDark.toString()].container}>
+            <ActivityIndicator size="large" color="#0000ff" animating={loading}/>
+            <View style={styles[isDark.toString()].row}>
+                <Text style={styles[isDark.toString()].header}>Add New Item</Text>
+            </View>
+            <View style={styles[isDark.toString()].error}>
+                {fieldError && <Text style={styles[isDark.toString()].errorText}>
+                    {error.toString()}</Text>}
+            </View>
+            {addItemURL()}
             <Input
-                style={styles.textBox}
+                style={styles[isDark.toString()].textBox}
                 leftIcon={
                     <Icon
                         name="dollar"
@@ -239,15 +298,15 @@ export default ({navigation}) => {
                         color="#133480"
                         size={15}
                         onPress={() => editable ? setTargetPrice('') : {}}
-                        style={styles.icon}
+                        style={styles[isDark.toString()].icon}
                     />
                 }
                 editable={editable}
                 value={targetPrice}
                 onChangeText={(targetPrice) => setTargetPrice(targetPrice)}
-                inputContainerStyle={[styles.textField,
+                inputContainerStyle={[styles[isDark.toString()].textField,
                     fieldError
-                        ? styles.invalid
+                        ? styles[isDark.toString()].invalid
                         : null]}
                 underlineColorAndroid="transparent"
                 placeholder="Set Target Price"
@@ -255,17 +314,79 @@ export default ({navigation}) => {
                 keyboardType="number-pad"
             />
             <Button
-                buttonStyle={styles.button} fs
+                buttonStyle={styles[isDark.toString()].button} fs
                 onPress={addItem}
                 title="Confirm"
-                titleStyle={styles.buttonText}
+                titleStyle={styles[isDark.toString()].buttonText}
                 disabled={disabled}
             />
         </KeyboardAvoidingView>
     );
 }
 
-const styles = StyleSheet.create(
+const styles = {"true": StyleSheet.create(
+    {
+        container: {
+            paddingHorizontal: '10%',
+            flexDirection: 'column',
+            flex: 1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            fontFamily: 'ProximaNova',
+            backgroundColor: "#464646"
+        },
+        row: {
+            flexDirection: 'row',
+            marginTop: 100,
+            marginBottom: 20,
+            fontFamily: 'ProximaNova',
+        },
+        header: {
+            fontFamily: 'ProximaNovaBold',
+            fontSize: 30,
+            color: "#e6e8e6"
+        },
+        textBox: {
+            fontFamily: 'ProximaNova',
+            paddingLeft: 15
+        },
+        textField: {
+            backgroundColor: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 5,
+            borderBottomWidth: 2,
+            borderRadius: 20,
+            paddingLeft: 10,
+        },
+        button: {
+            backgroundColor: "#133480",
+            borderRadius: 20,
+            width: 295,
+            marginBottom: 20
+        },
+        buttonText: {
+            fontFamily: 'ProximaNova',
+        },
+        invalid: {
+            borderColor: 'red',
+            borderWidth: 2
+        },
+        error: {
+            padding: 15
+        },
+        errorText: {
+            fontFamily: 'ProximaNova',
+            fontSize: 20,
+            textAlign: 'center'
+        },
+        icon: {
+            marginRight: 5
+        },
+        headerIcon: {
+            padding: 20
+        },
+    }),
+    "false": StyleSheet.create(
     {
         container: {
             paddingHorizontal: '10%',
@@ -324,5 +445,66 @@ const styles = StyleSheet.create(
         headerIcon: {
             padding: 20
         },
-    })
+    }),
+    "false": StyleSheet.create(
+    {
+        container: {
+            paddingHorizontal: '10%',
+            flexDirection: 'column',
+            flex: 1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            fontFamily: 'ProximaNova'
+        },
+        row: {
+            flexDirection: 'row',
+            marginTop: 100,
+            marginBottom: 20,
+            fontFamily: 'ProximaNova',
+        },
+        header: {
+            fontFamily: 'ProximaNovaBold',
+            fontSize: 30,
+        },
+        textBox: {
+            fontFamily: 'ProximaNova',
+            paddingLeft: 15
+        },
+        textField: {
+            backgroundColor: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 5,
+            borderBottomWidth: 2,
+            borderRadius: 20,
+            paddingLeft: 10,
+        },
+        button: {
+            backgroundColor: "#133480",
+            borderRadius: 20,
+            width: 295,
+            marginBottom: 20
+        },
+        buttonText: {
+            fontFamily: 'ProximaNova',
+        },
+        invalid: {
+            borderColor: 'red',
+            borderWidth: 2
+        },
+        error: {
+            padding: 15
+        },
+        errorText: {
+            fontFamily: 'ProximaNova',
+            fontSize: 20,
+            textAlign: 'center'
+        },
+        icon: {
+            marginRight: 5
+        },
+        headerIcon: {
+            padding: 20
+        },
+    }),
+}
 

@@ -130,6 +130,7 @@ export default ({navigation}) => {
                 title="Sign up"
                 titleStyle={styles.buttonText}
             />
+        <View style={{ flex : 5}} />
         </KeyboardAvoidingView>
     );
 }
@@ -145,6 +146,7 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova',
         },
         header: {
+            flex: 1,
             fontFamily: 'ProximaNova',
             marginTop: 100,
             marginBottom: 10,

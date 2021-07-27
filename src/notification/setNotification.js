@@ -16,7 +16,8 @@ export const registerForPushNotificationsAsync = async () => {
         const id = firebase.auth().currentUser.email
         let userDB = await firebase.firestore().collection('users').doc(id).get()
         if (!userDB.exists) {
-            await firebase.firestore().collection('users').doc(id).set({itemKeyCounter: 1, darkMode: false})
+            await firebase.firestore().collection('users').doc(id)
+            .set({itemKeyCounter: 1, darkMode: false, filter: "All", site: "all"})
         }
         if (Constants.isDevice) {
             const {status: existingStatus} = await Notifications.getPermissionsAsync()
@@ -33,7 +34,7 @@ export const registerForPushNotificationsAsync = async () => {
             await firebase.firestore().collection('users').doc(firebase.auth().currentUser.email).update({token:token})
         } else {
             //alert('Must use physical device for Push Notifications');
-            console.log('Must use physical device for Push Notifications')
+            //console.log('Must use physical device for Push Notifications')
         }
 
         if (Platform.OS === 'android') {

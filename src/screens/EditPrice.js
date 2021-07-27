@@ -87,7 +87,7 @@ export default ({route, navigation}) => {
 
     return (
         <KeyboardAvoidingView style={styles.container}>
-            <View style={styles.row}>
+            <View style={styles.title}>
                 <Text style={styles.header}>Edit Target Price</Text>
             </View>
             <View style={styles.error}>
@@ -144,8 +144,7 @@ const styles = StyleSheet.create(
             alignItems: 'center',
             fontFamily: 'ProximaNova'
         },
-        row: {
-            flexDirection: 'row',
+        title: {
             marginTop: 100,
             marginBottom: 20,
             fontFamily: 'ProximaNova',

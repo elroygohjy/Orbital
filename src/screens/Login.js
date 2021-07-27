@@ -179,6 +179,7 @@ const styles = StyleSheet.create(
             fontFamily: 'ProximaNova'
         },
         row: {
+            flex: 1,
             flexDirection: 'row',
             marginTop: 100,
             marginBottom: 20,

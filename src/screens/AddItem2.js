@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, KeyboardAvoidingView,
-ActivityIndicator, TouchableOpacity, ScrollView,
-BackHandler} from 'react-native';
+ActivityIndicator, TouchableOpacity, BackHandler} from 'react-native';
 import {Input, Button} from "react-native-elements"
 import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
@@ -13,9 +12,10 @@ import { getInstallReferrerAsync } from 'expo-application';
 
 export default ({route, navigation}) => {
 
+    var {key} = route.params
+    // console.log(key)
+
     var value = ''
-    var {test} = route.params
-    // console.log(test)
     
     const [URL, setURL] = useState('');
     const [targetPrice, setTargetPrice] = useState('');
@@ -24,6 +24,10 @@ export default ({route, navigation}) => {
     const [disabled, setDisabled] = useState(false)
     const [editable, setEditable] = useState(true)
     const [loading, setLoading] = useState(false)
+    const [isDark, setDark] = useState(false)
+    const [modeLoaded, setModeLoaded] = useState(false)
+
+    // console.log(isDark)
 
     var countDecimals = function(value) {
         if (!value.includes(".")) {
@@ -33,31 +37,12 @@ export default ({route, navigation}) => {
             return value.toString().split(".")[1].length || 0;
         return 0;
     }
-    
-    const getItemKey = async () => {
-       var count = 0;
-       await firebase
-       .firestore()
-       .doc('users/' + firebase.auth().currentUser.email)
-       .get()
-       .then(doc => {
-           count = doc.data().itemKeyCounter
-           firebase
-           .firestore()
-           .doc('users/' + firebase.auth().currentUser.email)
-           .update({itemKeyCounter: count + 1})
-       })
-       .catch(err => {
-           console.log('Error getting documents', err)
-       });
-       return count
-    }
 
     const getItemSite = () => {
         if (URL.includes("shopee")) {
             return "shopee"
-        } else if (URL.includes("qoo10")) {
-            return "qoo10"
+        } else if (URL.includes("qoo")) {
+            return "qoo"
         } else if (URL.includes("ebay")) {
             return "ebay"
         }
@@ -99,9 +84,8 @@ export default ({route, navigation}) => {
             .add({
                 URL: value,
                 TargetPrice: sliced == 0 ? parseFloat(targetPrice) : sliced,
-                itemKey: "2",
                 edited: false,
-                itemKey: await getItemKey(),
+                itemKey: key,
                 site: getItemSite()
             })
             .then(doc => {
@@ -150,7 +134,7 @@ export default ({route, navigation}) => {
             setLoading(true)
             setPrice()
         } else {
-            console.log(URL)
+            // console.log(URL)
             setError('Invalid URL entered')
             setFieldError('Error')
             setDisabled(false)
@@ -161,46 +145,55 @@ export default ({route, navigation}) => {
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
             setFieldError(null)
-            console.log(route)
-            if (route.params !== undefined) {
-                console.log(route.params['test'])
-            }
-            setURL(test)
         });
         return unsubscribe
     }, [navigation]);
 
     useEffect(() => {
         navigation.setOptions({
+            headerStyle: {backgroundColor: '#AAAAAA'},
             headerLeft: () => (
-                <TouchableOpacity style={styles.headerIcon}
-                onPress={() => navigation.reset({routes: [{ name: 'Homepage' }]})}>
+                <TouchableOpacity style={styles[isDark.toString()].headerIcon}
+                onPress={() => navigation.goBack()}>
                     <Icon1
                         name="arrow-left"
                         color="#133480"
                         size={20}
                     />
                 </TouchableOpacity>
+            ),
+            headerRight: () => (
+                <TouchableOpacity style={styles[isDark.toString()].headerIcon}
+                onPress={() => {navigation.navigate("Home", {
+                    screen: 'Barcode 2', 
+                    params: {key: key}
+                    })
+                }}>
+                    <Icon1
+                        name="barcode"
+                        color="#133480"
+                        size={20}
+                    />
+                </TouchableOpacity>
             )
-        });
+          });
     }, []);
 
     useEffect(() => {
-        const backAction = () => {
-            navigation.reset({routes: [{ name: 'Homepage' }]})
-            return true;
-        };
+    const backAction = () => {
+        navigation.goBack()
+        return true;
+    };
 
-        const backHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
-          backAction
-        );
+    const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+    );
 
-        return () => backHandler.remove();
+    return () => backHandler.remove();
     }, []);
-      
 
-    let [loaded] = useFonts({
+    let loaded = useFonts({
         ProximaNova: require('../assets/fonts/ProximaNova.otf'),
         ProximaNovaBold: require('../assets/fonts/ProximaNova-Bold.otf')
     });
@@ -209,19 +202,77 @@ export default ({route, navigation}) => {
         return <AppLoading />;
     }
 
+    if (!modeLoaded) {
+        // console.log("loading")
+        return <AppLoading 
+            startAsync={async () => 
+                await firebase
+                .firestore()
+                .doc('users/' + firebase.auth().currentUser.email)
+                .get()
+                .then(doc => {
+                    setDark(doc.data().darkMode)
+                    // console.log(isDark)
+                })
+                .catch(err => {
+                    console.log('Error getting documents', err)
+                })
+            }
+            onError={() => {}}
+            onFinish={() => setModeLoaded(true)}
+        />
+    }
+
+    const addItemURL = () => {
+        var fields = []
+        for (let i = 0; i < 1; i++) {
+            fields.push(<Input
+                style={styles[isDark.toString()].textBox}
+                multiline={true}
+                leftIcon={
+                    <Icon
+                        name="internet-explorer"
+                        color="#133480"
+                        size={15}
+                    />
+                }
+                rightIcon={
+                    <Icon
+                        name="remove"
+                        color="#133480"
+                        size={15}
+                        onPress={() => editable ? setURL('') : {}}
+                        style={styles[isDark.toString()].icon}
+                    />
+                }
+                defaultValue={URL}
+                value={URL}
+                onChangeText={(URL) => setURL(URL)}
+                inputContainerStyle={[styles[isDark.toString()].textField,
+                    fieldError
+                        ? styles[isDark.toString()].invalid
+                        : null]}
+                underlineColorAndroid="transparent"
+                placeholder="Enter URL"
+                autoCapitalize="none"
+            />)
+        }
+        return fields
+    }
+
     return (
-        <ScrollView>
-        <KeyboardAvoidingView style={styles.container}>
-            <ActivityIndicator size="large" color="#0000ff" style={{paddingTop: 12}} animating={loading}/>
-            <View style={styles.row}>
-                <Text style={styles.header}>Add New Item</Text>
+        <KeyboardAvoidingView style={styles[isDark.toString()].container}>
+            <ActivityIndicator size="large" color="#0000ff" animating={loading}/>
+            <View style={styles[isDark.toString()].row}>
+                <Text style={styles[isDark.toString()].header}>Add New Item</Text>
             </View>
-            <View style={styles.error}>
-                {fieldError && <Text style={styles.errorText}>
+            <View style={styles[isDark.toString()].error}>
+                {fieldError && <Text style={styles[isDark.toString()].errorText}>
                     {error.toString()}</Text>}
             </View>
+            {addItemURL()}
             <Input
-                style={styles.textBox}
+                style={styles[isDark.toString()].textBox}
                 leftIcon={
                     <Icon
                         name="dollar"
@@ -235,15 +286,15 @@ export default ({route, navigation}) => {
                         color="#133480"
                         size={15}
                         onPress={() => editable ? setTargetPrice('') : {}}
-                        style={styles.icon}
+                        style={styles[isDark.toString()].icon}
                     />
                 }
                 editable={editable}
                 value={targetPrice}
                 onChangeText={(targetPrice) => setTargetPrice(targetPrice)}
-                inputContainerStyle={[styles.textField,
+                inputContainerStyle={[styles[isDark.toString()].textField,
                     fieldError
-                        ? styles.invalid
+                        ? styles[isDark.toString()].invalid
                         : null]}
                 underlineColorAndroid="transparent"
                 placeholder="Set Target Price"
@@ -251,18 +302,79 @@ export default ({route, navigation}) => {
                 keyboardType="number-pad"
             />
             <Button
-                buttonStyle={styles.button} fs
+                buttonStyle={styles[isDark.toString()].button} fs
                 onPress={addItem}
                 title="Confirm"
-                titleStyle={styles.buttonText}
+                titleStyle={styles[isDark.toString()].buttonText}
                 disabled={disabled}
             />
         </KeyboardAvoidingView>
-        </ScrollView>
     );
 }
 
-const styles = StyleSheet.create(
+const styles = {"true": StyleSheet.create(
+    {
+        container: {
+            paddingHorizontal: '10%',
+            flexDirection: 'column',
+            flex: 1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            fontFamily: 'ProximaNova',
+            backgroundColor: "#464646"
+        },
+        row: {
+            flexDirection: 'row',
+            marginTop: 100,
+            marginBottom: 20,
+            fontFamily: 'ProximaNova',
+        },
+        header: {
+            fontFamily: 'ProximaNovaBold',
+            fontSize: 30,
+            color: "#e6e8e6"
+        },
+        textBox: {
+            fontFamily: 'ProximaNova',
+            paddingLeft: 15
+        },
+        textField: {
+            backgroundColor: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 5,
+            borderBottomWidth: 2,
+            borderRadius: 20,
+            paddingLeft: 10,
+        },
+        button: {
+            backgroundColor: "#133480",
+            borderRadius: 20,
+            width: 295,
+            marginBottom: 20
+        },
+        buttonText: {
+            fontFamily: 'ProximaNova',
+        },
+        invalid: {
+            borderColor: 'red',
+            borderWidth: 2
+        },
+        error: {
+            padding: 15
+        },
+        errorText: {
+            fontFamily: 'ProximaNova',
+            fontSize: 20,
+            textAlign: 'center'
+        },
+        icon: {
+            marginRight: 5
+        },
+        headerIcon: {
+            padding: 20
+        },
+    }),
+    "false": StyleSheet.create(
     {
         container: {
             paddingHorizontal: '10%',
@@ -321,35 +433,66 @@ const styles = StyleSheet.create(
         headerIcon: {
             padding: 20
         },
-    })
+    }),
+    "false": StyleSheet.create(
+    {
+        container: {
+            paddingHorizontal: '10%',
+            flexDirection: 'column',
+            flex: 1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            fontFamily: 'ProximaNova'
+        },
+        row: {
+            flexDirection: 'row',
+            marginTop: 100,
+            marginBottom: 20,
+            fontFamily: 'ProximaNova',
+        },
+        header: {
+            fontFamily: 'ProximaNovaBold',
+            fontSize: 30,
+        },
+        textBox: {
+            fontFamily: 'ProximaNova',
+            paddingLeft: 15
+        },
+        textField: {
+            backgroundColor: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 5,
+            borderBottomWidth: 2,
+            borderRadius: 20,
+            paddingLeft: 10,
+        },
+        button: {
+            backgroundColor: "#133480",
+            borderRadius: 20,
+            width: 295,
+            marginBottom: 20
+        },
+        buttonText: {
+            fontFamily: 'ProximaNova',
+        },
+        invalid: {
+            borderColor: 'red',
+            borderWidth: 2
+        },
+        error: {
+            padding: 15
+        },
+        errorText: {
+            fontFamily: 'ProximaNova',
+            fontSize: 20,
+            textAlign: 'center'
+        },
+        icon: {
+            marginRight: 5
+        },
+        headerIcon: {
+            padding: 20
+        },
+    }),
+}
 
-/* <Input
-                style={styles.textBox}
-                multiline={false}
-                leftIcon={
-                    <Icon
-                        name="internet-explorer"
-                        color="#133480"
-                        size={15}
-                    />
-                }
-                rightIcon={
-                    <Icon
-                        name="remove"
-                        color="#133480"
-                        size={15}
-                        onPress={() => editable ? setURL('') : {}}
-                        style={styles.icon}
-                    />
-                }
-                defaultValue={URL}
-                value={URL}
-                onChangeText={(URL) => setURL(URL)}
-                inputContainerStyle={[styles.textField,
-                    fieldError
-                        ? styles.invalid
-                        : null]}
-                underlineColorAndroid="transparent"
-                placeholder="Enter URL"
-                autoCapitalize="none"
-            />*/
