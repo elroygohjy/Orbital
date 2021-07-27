@@ -9,7 +9,7 @@ import "firebase/functions";
 
 export default ({route, navigation}) => {
 
-    var {key} = route.params
+    var {key, item} = route.params
     // console.log(key)
 
     const [hasPermission, setHasPermission] = useState(null);
@@ -28,7 +28,10 @@ export default ({route, navigation}) => {
             headerTitle: "Scanner",
             headerLeft: () => (
                 <TouchableOpacity style={styles.icon}
-                onPress={() => loading ? navigation.navigate('Add Item 2') : {}}>
+                onPress={() => {navigation.navigate("Home", {
+                    screen: 'Add Item 2', 
+                    params: {key: key, item: item}
+                    })}}>
                     <Icon1
                         name="arrow-left"
                         color="#133480"
@@ -41,7 +44,10 @@ export default ({route, navigation}) => {
 
     useEffect(() => {
         const backAction = () => {
-          loading ? navigation.reset({routes: [{ name: 'Add Item 2' }]}) : {}
+          {navigation.navigate("Home", {
+            screen: 'Add Item 2', 
+            params: {key: key, item: item}
+            })}
             return true;
         };
 
@@ -86,6 +92,28 @@ export default ({route, navigation}) => {
   }
 
   if (loading === true) {
+    navigation.setOptions({
+      headerTitle: "Scanner",
+      headerLeft: () => (
+          <TouchableOpacity style={styles.icon}
+          onPress={() => {}}>
+              <Icon1
+                  name="arrow-left"
+                  color="#133480"
+                  size={20}
+              />
+          </TouchableOpacity>
+      )
+    });
+    const backAction = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+    
     return (
       <View>
           <Text style={styles.validate}>Validating input URL...</Text>

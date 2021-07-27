@@ -12,7 +12,7 @@ import { getInstallReferrerAsync } from 'expo-application';
 
 export default ({route, navigation}) => {
 
-    var {key} = route.params
+    var {key, item} = route.params
     // console.log(key)
 
     var value = ''
@@ -154,19 +154,23 @@ export default ({route, navigation}) => {
             headerStyle: {backgroundColor: '#AAAAAA'},
             headerLeft: () => (
                 <TouchableOpacity style={styles[isDark.toString()].headerIcon}
-                onPress={() => navigation.goBack()}>
-                    <Icon1
-                        name="arrow-left"
-                        color="#133480"
-                        size={20}
-                    />
+                onPress={() => {navigation.navigate("Home", {
+                    screen: 'Item', 
+                    params: {item: item}
+                    })
+                }}>
+                <Icon1
+                    name="arrow-left"
+                    color="#133480"
+                    size={20}
+                />
                 </TouchableOpacity>
             ),
             headerRight: () => (
                 <TouchableOpacity style={styles[isDark.toString()].headerIcon}
                 onPress={() => {navigation.navigate("Home", {
                     screen: 'Barcode 2', 
-                    params: {key: key}
+                    params: {key: key, item: item}
                     })
                 }}>
                     <Icon1
@@ -181,7 +185,10 @@ export default ({route, navigation}) => {
 
     useEffect(() => {
     const backAction = () => {
-        navigation.goBack()
+        navigation.navigate("Home", {
+            screen: 'Item', 
+            params: {item: item}
+            })
         return true;
     };
 
@@ -222,6 +229,29 @@ export default ({route, navigation}) => {
             onFinish={() => setModeLoaded(true)}
         />
     }
+
+    if (loading === true) {
+        navigation.setOptions({
+          headerLeft: () => (
+              <TouchableOpacity style={styles.headerIcon}
+              onPress={() => {}}>
+                  <Icon1
+                      name="arrow-left"
+                      color="#133480"
+                      size={20}
+                  />
+              </TouchableOpacity>
+          )
+        });
+        const backAction = () => {
+          return true;
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction
+        );
+      }
 
     const addItemURL = () => {
         var fields = []

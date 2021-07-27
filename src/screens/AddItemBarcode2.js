@@ -190,6 +190,29 @@ export default ({route, navigation}) => {
         return <AppLoading />;
     }
 
+    if (loading === true) {
+        navigation.setOptions({
+          headerLeft: () => (
+              <TouchableOpacity style={styles.headerIcon}
+              onPress={() => {}}>
+                  <Icon1
+                      name="arrow-left"
+                      color="#133480"
+                      size={20}
+                  />
+              </TouchableOpacity>
+          )
+        });
+        const backAction = () => {
+          return true;
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction
+        );
+      }
+
     return (
         <ScrollView>
         <KeyboardAvoidingView style={styles.container}>

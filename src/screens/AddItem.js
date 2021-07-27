@@ -94,6 +94,7 @@ export default ({navigation}) => {
             setDisabled(true)
             setFieldError(null)
             setEditable(false)
+            
             await firebase
             .firestore()
             .collection('users/' + firebase.auth().currentUser.email + '/items')
@@ -233,6 +234,31 @@ export default ({navigation}) => {
             onError={() => {}}
             onFinish={() => setModeLoaded(true)}
         />
+    }
+
+
+  if (loading === true) {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity style={styles.headerIcon}
+        onPress={() => {}}>
+            <Icon1
+                name="arrow-left"
+                color="#133480"
+                size={20}
+            />
+        </TouchableOpacity>
+      )
+    });
+
+    const backAction = () => {
+        return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+    );
     }
 
     const addItemURL = () => {

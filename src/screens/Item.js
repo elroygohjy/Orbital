@@ -148,7 +148,10 @@ export default ({route, navigation}) => {
                     <TouchableOpacity style={styles.icon}
                         onPress={() => {
                             console.log(item[0]["key"])
-                            navigation.navigate('Add Item 2', {key: item[0]["key"]})
+                            navigation.navigate("Home", {
+                                screen: 'Add Item 2', 
+                                params: {key: item[0]["key"], item: item}
+                                })
                         }}>
                             <Icon1
                                 name="plus"
@@ -167,8 +170,10 @@ export default ({route, navigation}) => {
                                 />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.icon}
-                            onPress={() => {
-                                navigation.navigate('Add Item 2', {key: item[0]["key"]})
+                            onPress={() => {navigation.navigate("Home", {
+                                screen: 'Add Item 2', 
+                                params: {key: item[0]["key"], item: item}
+                                })
                             }}>
                                 <Icon1
                                     name="plus"

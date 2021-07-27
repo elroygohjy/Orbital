@@ -11,7 +11,7 @@ export default ({navigation}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  console.log(loading)
   useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -24,7 +24,7 @@ export default ({navigation}) => {
           headerTitle: "Scanner",
           headerLeft: () => (
               <TouchableOpacity style={styles.icon}
-              onPress={() => loading ? navigation.navigate('Add Item') : {}}>
+              onPress={() => {navigation.navigate('Add Item')}}>
                   <Icon1
                       name="arrow-left"
                       color="#133480"
@@ -37,7 +37,7 @@ export default ({navigation}) => {
 
   useEffect(() => {
     const backAction = () => {
-        loading ? navigation.reset({routes: [{ name: 'Add Item' }]}) : {}
+        navigation.reset({routes: [{ name: 'Add Item' }]})
         return true;
     };
 
@@ -82,6 +82,28 @@ export default ({navigation}) => {
   }
 
   if (loading === true) {
+    navigation.setOptions({
+      headerTitle: "Scanner",
+      headerLeft: () => (
+          <TouchableOpacity style={styles.icon}
+          onPress={() => {}}>
+              <Icon1
+                  name="arrow-left"
+                  color="#133480"
+                  size={20}
+              />
+          </TouchableOpacity>
+      )
+    });
+    const backAction = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+    
     return (
       <View>
           <Text style={styles.validate}>Validating input URL...</Text>
